@@ -333,20 +333,42 @@
             animation-delay: 0.5s;
         }
 
-        .press-start {
+        .button-group {
             position: absolute;
             bottom: 18%;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: clamp(0.7rem, 1.5vw, 1rem);
-            color: #444;
-            letter-spacing: 0.3em;
-            animation: blink 1.5s ease infinite;
-            cursor: pointer;
+            display: flex;
+            gap: 20px;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards;
+            animation-delay: 1s;
         }
 
-        @keyframes blink {
-            0%, 50%, 100% { opacity: 1; }
-            25%, 75% { opacity: 0.3; }
+        .game-btn {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: clamp(0.75rem, 1.5vw, 0.95rem);
+            color: #555;
+            letter-spacing: 0.2em;
+            padding: 12px 30px;
+            border: 1px solid #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: transparent;
+        }
+
+        .game-btn:hover {
+            border-color: #666;
+            color: #999;
+        }
+
+        .game-btn.primary {
+            border-color: var(--blood-red);
+            color: var(--blood-red);
+        }
+
+        .game-btn.primary:hover {
+            background: var(--blood-red);
+            color: #fff;
+            box-shadow: 0 0 30px rgba(139,0,0,0.5);
         }
 
         /* Glitch effect */
@@ -1089,7 +1111,10 @@
                 <div class="title-main glitch" data-text="SIDE">SIDE</div>
                 <div class="title-tagline">— 꿈이 썩어가는 곳 —</div>
             </div>
-            <div class="press-start">CLICK TO START</div>
+            <div class="button-group">
+                <div class="game-btn" onclick="goToWorldview()">세계관 보기</div>
+                <div class="game-btn primary" onclick="startGame()">플레이하기</div>
+            </div>
         </div>
 
         <button class="skip-btn" onclick="skipTeaser()">SKIP ▸</button>
@@ -2239,22 +2264,22 @@
         };
 
         // Slideshow
-        let currentSlide = 0;
-        const totalSlides = 9;
-        let slideInterval;
-        let isLastSlide = false;
+        var currentSlide = 0;
+        var totalSlides = 9;
+        var slideInterval;
+        var isLastSlide = false;
 
         function showSlide(n) {
-            const current = document.querySelector('.slide.active');
+            var current = document.querySelector('.slide.active');
             if (current) {
                 current.classList.remove('active');
                 current.classList.add('exit');
-                setTimeout(() => current.classList.remove('exit'), 500);
+                setTimeout(function() { current.classList.remove('exit'); }, 500);
             }
             
-            const slide = document.querySelector(\`[data-slide="\${n}"]\`);
+            var slide = document.querySelector('[data-slide="' + n + '"]');
             if (slide) {
-                setTimeout(() => slide.classList.add('active'), 100);
+                setTimeout(function() { slide.classList.add('active'); }, 100);
             }
             
             // Last slide - stop auto advance
@@ -2267,7 +2292,6 @@
         function nextSlide() {
             currentSlide++;
             if (currentSlide >= totalSlides) {
-                endTeaser();
                 return;
             }
             showSlide(currentSlide);
@@ -2275,60 +2299,66 @@
 
         function skipTeaser() {
             clearInterval(slideInterval);
-            endTeaser();
+            goToWorldview();
         }
 
-        function endTeaser() {
+        function goToWorldview() {
             document.getElementById('teaser').classList.add('hidden');
             document.getElementById('main-content').classList.add('visible');
-            const firstItem = document.querySelector('.file-item.active');
+            var firstItem = document.querySelector('.file-item.active');
             showContent('timeline', firstItem);
         }
 
-        // Click to start on last slide
-        document.addEventListener('click', (e) => {
-            if (isLastSlide && !e.target.classList.contains('skip-btn')) {
-                endTeaser();
-            }
-        });
+        function startGame() {
+            window.location.href = 'https://share.crack.wrtn.ai/34rqlr5';
+        }
 
         // File System
         function toggleFolder(header) {
-            const folder = header.parentElement;
+            var folder = header.parentElement;
             folder.classList.toggle('open');
             header.querySelector('.folder-icon').textContent = folder.classList.contains('open') ? '▾' : '▸';
         }
 
         function showContent(id, el) {
-            const data = contentData[id];
+            var data = contentData[id];
             if (!data) return;
 
             document.getElementById('current-path').innerHTML = data.path;
             
-            const classEl = document.getElementById('classification');
+            var classEl = document.getElementById('classification');
             classEl.className = 'classification ' + data.classification;
             classEl.textContent = data.classification.toUpperCase();
 
             document.getElementById('file-content').innerHTML = data.html;
 
-            document.querySelectorAll('.file-item').forEach(i => i.classList.remove('active'));
+            var items = document.querySelectorAll('.file-item');
+            for (var i = 0; i < items.length; i++) {
+                items[i].classList.remove('active');
+            }
             if (el) el.classList.add('active');
         }
 
         function mobileNav(folder) {
-            document.querySelectorAll('.mobile-nav button').forEach(b => b.classList.remove('active'));
+            var buttons = document.querySelectorAll('.mobile-nav button');
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove('active');
+            }
             event.target.classList.add('active');
-            const f = document.querySelector(\`[data-folder="\${folder}"]\`);
+            var f = document.querySelector('[data-folder="' + folder + '"]');
             if (f) {
-                const first = f.querySelector('.file-item');
+                var first = f.querySelector('.file-item');
                 if (first) {
-                    const id = first.getAttribute('onclick').match(/showContent\('([^']+)'/)[1];
-                    showContent(id, first);
+                    var onclick = first.getAttribute('onclick');
+                    var match = onclick.match(/showContent\('([^']+)'/);
+                    if (match) {
+                        showContent(match[1], first);
+                    }
                 }
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', function() {
             showSlide(0);
             slideInterval = setInterval(nextSlide, 3500);
         });
