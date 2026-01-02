@@ -10,426 +10,332 @@
             --bg-dark: #0a0a0a;
             --bg-darker: #050505;
             --blood-red: #8b0000;
-            --blood-glow: #ff0000;
             --rust: #4a2020;
             --ash: #1a1a1a;
-            --smoke: #2a2a2a;
             --bone: #3a3a3a;
             --text-dim: #555;
             --text-faded: #888;
             --warning: #ff3333;
-            --terminal: #00ff41;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Noto Sans KR', sans-serif;
-            background: var(--bg-dark);
+            background: #000;
             color: #ccc;
             overflow-x: hidden;
         }
 
-        /* Noise overlay */
+        /* Noise + Scanlines */
         body::before {
             content: '';
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E");
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
             opacity: 0.03;
             pointer-events: none;
             z-index: 9999;
         }
 
-        /* Scanlines */
         body::after {
             content: '';
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 2px,
-                rgba(0,0,0,0.15) 2px,
-                rgba(0,0,0,0.15) 4px
-            );
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px);
             pointer-events: none;
             z-index: 9998;
         }
 
-        /* ===== TEASER - GAME CINEMATIC STYLE ===== */
+        /* ===== TEASER ===== */
         #teaser {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: 1000;
             background: #000;
-            transition: opacity 1.5s ease;
             overflow: hidden;
         }
 
         #teaser.hidden {
             opacity: 0;
             pointer-events: none;
+            transition: opacity 1s ease;
         }
 
-        /* Letterbox bars */
         .letterbox {
             position: absolute;
             left: 0;
             width: 100%;
-            height: 12%;
+            height: 10%;
             background: #000;
             z-index: 10;
         }
         .letterbox.top { top: 0; }
         .letterbox.bottom { bottom: 0; }
 
-        /* Floating particles */
         .particles {
             position: absolute;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
+            width: 100%; height: 100%;
             z-index: 1;
         }
 
         .particle {
             position: absolute;
-            width: 2px;
-            height: 2px;
+            width: 2px; height: 2px;
             background: var(--blood-red);
-            opacity: 0.3;
-            animation: floatParticle 15s infinite linear;
+            opacity: 0.4;
+            animation: floatUp 12s infinite linear;
+        }
+        .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 25%; animation-delay: 2s; }
+        .particle:nth-child(3) { left: 50%; animation-delay: 4s; }
+        .particle:nth-child(4) { left: 75%; animation-delay: 1s; }
+        .particle:nth-child(5) { left: 90%; animation-delay: 3s; }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh); opacity: 0; }
+            10% { opacity: 0.4; }
+            90% { opacity: 0.4; }
+            100% { transform: translateY(-100vh); opacity: 0; }
         }
 
-        .particle:nth-child(1) { left: 10%; animation-delay: 0s; animation-duration: 20s; }
-        .particle:nth-child(2) { left: 30%; animation-delay: 3s; animation-duration: 18s; }
-        .particle:nth-child(3) { left: 50%; animation-delay: 6s; animation-duration: 22s; }
-        .particle:nth-child(4) { left: 70%; animation-delay: 2s; animation-duration: 16s; }
-        .particle:nth-child(5) { left: 90%; animation-delay: 5s; animation-duration: 19s; }
-
-        @keyframes floatParticle {
-            0% { transform: translateY(100vh) scale(1); opacity: 0; }
-            10% { opacity: 0.3; }
-            90% { opacity: 0.3; }
-            100% { transform: translateY(-100vh) scale(0.5); opacity: 0; }
-        }
-
-        /* Slides */
         .slide {
             position: absolute;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             opacity: 0;
-            background: transparent;
+            visibility: hidden;
             z-index: 5;
-            padding: 15% 20px;
+            padding: 12% 20px;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
         }
 
         .slide.active {
-            animation: slideIn 0.8s ease forwards;
+            opacity: 1;
+            visibility: visible;
         }
 
-        .slide.exit {
-            animation: slideOut 0.5s ease forwards;
+        /* Typography Styles */
+        .typo-whisper {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: clamp(1.2rem, 3.5vw, 2.2rem);
+            font-weight: 300;
+            color: #666;
+            letter-spacing: 0.15em;
+            text-align: center;
         }
 
-        @keyframes slideIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .typo-quote {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: clamp(1.5rem, 4vw, 2.8rem);
+            font-weight: 300;
+            color: var(--blood-red);
+            letter-spacing: 0.1em;
+            text-shadow: 0 0 40px rgba(139,0,0,0.4);
         }
 
-        @keyframes slideOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
+        .typo-brand {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(4rem, 15vw, 10rem);
+            letter-spacing: 0.5em;
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(139,0,0,0.4);
+            margin-top: 20px;
         }
 
-        /* Cinematic text */
-        .cinematic-text {
+        .typo-statement {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: clamp(1.3rem, 3.5vw, 2.2rem);
+            font-weight: 300;
+            color: #555;
+            letter-spacing: 0.2em;
+            text-align: center;
+            line-height: 2.2;
+        }
+
+        .typo-impact {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(5rem, 18vw, 14rem);
+            color: var(--blood-red);
+            letter-spacing: 0.15em;
+            text-shadow: 0 0 80px rgba(139,0,0,0.6);
+        }
+
+        .typo-list {
             font-family: 'Noto Sans KR', sans-serif;
             font-size: clamp(1.5rem, 4vw, 2.5rem);
             font-weight: 300;
-            color: #999;
+            color: #444;
+            letter-spacing: 0.25em;
             text-align: center;
-            letter-spacing: 0.15em;
-            line-height: 2;
+            line-height: 2.5;
         }
 
-        .cinematic-text.small {
-            font-size: clamp(1.2rem, 3vw, 2rem);
-        }
-
-        .typewriter {
-            opacity: 0;
-            animation: typeIn 0.6s ease forwards;
-        }
-
-        .typewriter.dim { color: #555; }
-
-        @keyframes typeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .glow-text {
-            color: var(--blood-red);
-            text-shadow: 0 0 30px rgba(139,0,0,0.5);
-        }
-
-        .subtitle-text {
-            margin-top: 30px;
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: clamp(3rem, 10vw, 6rem);
-            letter-spacing: 0.5em;
-            color: transparent;
-            -webkit-text-stroke: 1px rgba(139,0,0,0.5);
-        }
-
-        .fade-in {
-            opacity: 0;
-            animation: fadeInUp 1s ease forwards;
-            animation-delay: 0.8s;
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Impact text */
-        .impact-text {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: clamp(4rem, 15vw, 12rem);
-            letter-spacing: 0.2em;
-            color: var(--blood-red);
-            text-shadow: 0 0 60px rgba(139,0,0,0.8);
-            animation: impactIn 0.3s ease forwards;
-        }
-
-        .impact-text.delayed {
-            font-size: clamp(3rem, 12vw, 8rem);
-            opacity: 0;
-            animation: impactIn 0.4s ease forwards;
-            animation-delay: 0.8s;
-        }
-
-        @keyframes impactIn {
-            0% { opacity: 0; transform: scale(1.5); }
-            50% { opacity: 1; }
-            100% { opacity: 1; transform: scale(1); }
-        }
-
-        .highlight-word {
-            color: var(--blood-red) !important;
-            font-weight: 500;
-        }
-
-        /* Multi-line reveal */
-        .multi-line {
-            text-align: center;
-        }
-
-        .line-reveal {
-            font-family: 'Noto Sans KR', sans-serif;
-            font-size: clamp(1.5rem, 5vw, 3rem);
-            font-weight: 300;
-            color: #666;
-            letter-spacing: 0.2em;
-            margin: 15px 0;
-            opacity: 0;
-            animation: lineReveal 0.6s ease forwards;
-        }
-
-        .line-reveal:nth-child(1) { animation-delay: 0s; }
-        .line-reveal:nth-child(2) { animation-delay: 0.4s; }
-        .line-reveal:nth-child(3) { animation-delay: 0.8s; }
-
-        @keyframes lineReveal {
-            from { opacity: 0; transform: translateX(-30px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        /* Year reveal */
-        .year-reveal {
-            display: flex;
-            gap: 10px;
-        }
-
-        .year-num {
+        .typo-label {
             font-family: 'Share Tech Mono', monospace;
-            font-size: clamp(5rem, 18vw, 14rem);
+            font-size: clamp(0.7rem, 1.5vw, 1rem);
+            color: #333;
+            letter-spacing: 0.3em;
+            margin-top: 30px;
+        }
+
+        .typo-year {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: clamp(6rem, 22vw, 16rem);
             color: transparent;
             -webkit-text-stroke: 1px var(--blood-red);
-            opacity: 0;
-            animation: numReveal 0.4s ease forwards;
-        }
-
-        .year-num:nth-child(1) { animation-delay: 0s; }
-        .year-num:nth-child(2) { animation-delay: 0.15s; }
-        .year-num:nth-child(3) { animation-delay: 0.3s; }
-        .year-num:nth-child(4) { animation-delay: 0.45s; }
-
-        @keyframes numReveal {
-            0% { opacity: 0; transform: translateY(-50px); }
-            60% { opacity: 1; transform: translateY(10px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        .location-text {
-            margin-top: 30px;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: clamp(0.8rem, 2vw, 1.2rem);
-            color: #444;
-            letter-spacing: 0.3em;
-            opacity: 0;
-            animation: fadeInUp 0.8s ease forwards;
-            animation-delay: 0.8s;
-        }
-
-        /* Title reveal */
-        .title-reveal {
-            text-align: center;
-        }
-
-        .title-main {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: clamp(6rem, 25vw, 18rem);
-            letter-spacing: 0.4em;
-            color: var(--blood-red);
-            text-shadow: 0 0 80px rgba(139,0,0,0.6);
-            animation: titlePulse 2s ease infinite;
-        }
-
-        @keyframes titlePulse {
-            0%, 100% { text-shadow: 0 0 80px rgba(139,0,0,0.6); }
-            50% { text-shadow: 0 0 120px rgba(139,0,0,0.8), 0 0 40px rgba(139,0,0,0.4); }
-        }
-
-        .title-tagline {
-            font-family: 'Noto Sans KR', sans-serif;
-            font-size: clamp(0.9rem, 2.5vw, 1.5rem);
-            color: #555;
-            letter-spacing: 0.3em;
-            margin-top: 20px;
-            opacity: 0;
-            animation: fadeInUp 1s ease forwards;
-            animation-delay: 0.5s;
-        }
-
-        .button-group {
-            position: absolute;
-            bottom: 18%;
-            display: flex;
-            gap: 20px;
-            opacity: 0;
-            animation: fadeInUp 1s ease forwards;
-            animation-delay: 1s;
-        }
-
-        .game-btn {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: clamp(0.75rem, 1.5vw, 0.95rem);
-            color: #555;
             letter-spacing: 0.2em;
-            padding: 12px 30px;
-            border: 1px solid #333;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: transparent;
         }
 
-        .game-btn:hover {
-            border-color: #666;
-            color: #999;
-        }
-
-        .game-btn.primary {
-            border-color: var(--blood-red);
+        .typo-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(7rem, 28vw, 20rem);
+            letter-spacing: 0.35em;
             color: var(--blood-red);
+            text-shadow: 0 0 100px rgba(139,0,0,0.7);
+            animation: pulse 2.5s ease infinite;
         }
 
-        .game-btn.primary:hover {
-            background: var(--blood-red);
-            color: #fff;
-            box-shadow: 0 0 30px rgba(139,0,0,0.5);
+        @keyframes pulse {
+            0%, 100% { text-shadow: 0 0 100px rgba(139,0,0,0.7); }
+            50% { text-shadow: 0 0 150px rgba(139,0,0,0.9), 0 0 50px rgba(139,0,0,0.5); }
         }
 
-        /* Glitch effect */
+        .typo-tagline {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: clamp(0.9rem, 2vw, 1.3rem);
+            color: #444;
+            letter-spacing: 0.4em;
+            margin-top: 25px;
+        }
+
+        /* Highlight */
+        .hl { color: var(--blood-red); }
+        .dim { color: #333; }
+
+        /* Glitch Effect */
         .glitch {
             position: relative;
         }
-
-        .glitch::before,
-        .glitch::after {
+        .glitch::before, .glitch::after {
             content: attr(data-text);
             position: absolute;
-            left: 0;
-            width: 100%;
-            overflow: hidden;
+            left: 0; width: 100%;
         }
-
         .glitch::before {
             color: #ff0000;
-            animation: glitchBefore 3s infinite;
+            animation: glitch1 4s infinite;
             clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
         }
-
         .glitch::after {
             color: #00ffff;
-            animation: glitchAfter 3s infinite;
+            animation: glitch2 4s infinite;
             clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
         }
-
-        @keyframes glitchBefore {
-            0%, 92%, 100% { transform: translateX(0); }
-            93% { transform: translateX(-8px); }
+        @keyframes glitch1 {
+            0%, 94%, 100% { transform: translateX(0); }
+            95% { transform: translateX(-8px); }
+            97% { transform: translateX(8px); }
+        }
+        @keyframes glitch2 {
+            0%, 94%, 100% { transform: translateX(0); }
             95% { transform: translateX(8px); }
-            97% { transform: translateX(-4px); }
+            97% { transform: translateX(-8px); }
         }
 
-        @keyframes glitchAfter {
-            0%, 92%, 100% { transform: translateX(0); }
-            93% { transform: translateX(8px); }
-            95% { transform: translateX(-8px); }
-            97% { transform: translateX(4px); }
+        /* Typewriter */
+        .typewriter {
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid var(--blood-red);
+            animation: typing 2s steps(20) forwards, blink 0.8s step-end infinite;
+            width: 0;
+            display: inline-block;
+        }
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        @keyframes blink {
+            50% { border-color: transparent; }
+        }
+
+        /* Fade animations */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 1s ease forwards;
+        }
+        .fade-up.d1 { animation-delay: 0.3s; }
+        .fade-up.d2 { animation-delay: 0.6s; }
+        .fade-up.d3 { animation-delay: 0.9s; }
+        .fade-up.d4 { animation-delay: 1.2s; }
+
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Buttons */
+        .btn-group {
+            position: absolute;
+            bottom: 15%;
+            display: flex;
+            gap: 25px;
+            opacity: 0;
+            animation: fadeUp 1s ease forwards;
+            animation-delay: 1s;
+        }
+
+        .btn {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: clamp(0.75rem, 1.5vw, 0.9rem);
+            letter-spacing: 0.15em;
+            padding: 14px 35px;
+            border: 1px solid #333;
+            color: #555;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            border-color: #666;
+            color: #999;
+        }
+        .btn.primary {
+            border-color: var(--blood-red);
+            color: var(--blood-red);
+        }
+        .btn.primary:hover {
+            background: var(--blood-red);
+            color: #fff;
+            box-shadow: 0 0 40px rgba(139,0,0,0.5);
         }
 
         .skip-btn {
             position: fixed;
-            bottom: 4%;
-            right: 30px;
-            padding: 10px 25px;
-            background: transparent;
-            border: 1px solid #333;
-            color: #444;
+            bottom: 3%;
+            right: 25px;
             font-family: 'Share Tech Mono', monospace;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            color: #333;
+            background: none;
+            border: 1px solid #222;
+            padding: 8px 20px;
             cursor: pointer;
             z-index: 1001;
             transition: all 0.3s ease;
-            letter-spacing: 0.2em;
         }
-
         .skip-btn:hover {
-            border-color: var(--blood-red);
             color: var(--blood-red);
+            border-color: var(--blood-red);
         }
 
         /* ===== MAIN CONTENT ===== */
@@ -438,18 +344,15 @@
             min-height: 100vh;
             background: var(--bg-dark);
         }
-
         #main-content.visible {
             display: block;
-            animation: fadeIn 1.5s ease;
+            animation: fadeIn 1s ease;
         }
-
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
 
-        /* Header */
         .main-header {
             padding: 15px 30px;
             background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, transparent 100%);
@@ -469,10 +372,7 @@
             letter-spacing: 0.4em;
             color: var(--text-faded);
         }
-
-        .logo span {
-            color: var(--blood-red);
-        }
+        .logo span { color: var(--blood-red); }
 
         .access-badge {
             font-family: 'Share Tech Mono', monospace;
@@ -483,20 +383,17 @@
             letter-spacing: 0.15em;
             animation: warningPulse 2s infinite;
         }
-
         @keyframes warningPulse {
             0%, 100% { opacity: 0.7; }
             50% { opacity: 1; }
         }
 
-        /* Layout */
         .file-system {
             display: flex;
             min-height: 100vh;
             padding-top: 60px;
         }
 
-        /* Sidebar */
         .sidebar {
             width: 260px;
             background: rgba(0,0,0,0.6);
@@ -516,9 +413,7 @@
             letter-spacing: 0.3em;
         }
 
-        .folder {
-            margin-bottom: 3px;
-        }
+        .folder { margin-bottom: 3px; }
 
         .folder-header {
             display: flex;
@@ -529,12 +424,10 @@
             border-left: 2px solid transparent;
             font-size: 0.85rem;
         }
-
         .folder-header:hover {
             background: rgba(255,255,255,0.02);
             color: #fff;
         }
-
         .folder-header.active {
             background: rgba(139,0,0,0.1);
             border-left-color: var(--blood-red);
@@ -558,10 +451,7 @@
             display: none;
             padding-left: 35px;
         }
-
-        .folder.open .folder-files {
-            display: block;
-        }
+        .folder.open .folder-files { display: block; }
 
         .file-item {
             padding: 8px 15px;
@@ -573,14 +463,8 @@
             align-items: center;
             gap: 8px;
         }
-
-        .file-item:hover {
-            color: #ccc;
-        }
-
-        .file-item.active {
-            color: var(--blood-red);
-        }
+        .file-item:hover { color: #ccc; }
+        .file-item.active { color: var(--blood-red); }
 
         .rank-badge {
             font-family: 'Share Tech Mono', monospace;
@@ -588,13 +472,11 @@
             padding: 2px 5px;
             font-weight: bold;
         }
-
         .rank-s { background: var(--blood-red); color: #fff; }
         .rank-a { background: var(--rust); color: #ccc; }
         .rank-b { background: var(--bone); color: #999; }
         .rank-c { background: var(--ash); color: #666; }
 
-        /* Content */
         .content-area {
             margin-left: 260px;
             flex: 1;
@@ -620,10 +502,7 @@
             font-size: 0.75rem;
             color: var(--text-dim);
         }
-
-        .file-path span {
-            color: var(--blood-red);
-        }
+        .file-path span { color: var(--blood-red); }
 
         .classification {
             font-family: 'Share Tech Mono', monospace;
@@ -631,29 +510,20 @@
             padding: 4px 10px;
             letter-spacing: 0.1em;
         }
-
         .classified { background: var(--blood-red); color: #fff; }
         .restricted { background: var(--rust); color: #ccc; }
         .public { background: var(--bone); color: #999; }
 
-        .file-content {
-            padding: 25px;
-        }
+        .file-content { padding: 25px; }
 
         /* Profile Card */
         .profile-card {
             display: grid;
             grid-template-columns: 180px 1fr;
             gap: 30px;
-            animation: contentFade 0.5s ease;
+            animation: fadeIn 0.5s ease;
         }
 
-        @keyframes contentFade {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* REDACTED Image */
         .profile-image {
             width: 180px;
             height: 240px;
@@ -663,31 +533,22 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            overflow: hidden;
         }
-
         .profile-image::before {
             content: '';
             position: absolute;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 3px,
-                rgba(0,0,0,0.3) 3px,
-                rgba(0,0,0,0.3) 6px
-            );
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.3) 3px, rgba(0,0,0,0.3) 6px);
         }
 
         .redacted-stamp {
             font-family: 'Bebas Neue', sans-serif;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             color: var(--blood-red);
-            letter-spacing: 0.2em;
+            letter-spacing: 0.15em;
             transform: rotate(-15deg);
             border: 2px solid var(--blood-red);
-            padding: 5px 15px;
+            padding: 5px 12px;
             opacity: 0.8;
             z-index: 1;
         }
@@ -736,16 +597,13 @@
             color: #bbb;
         }
 
-        .info-value .glitch-text {
-            display: inline-block;
-            animation: textGlitch 5s infinite;
+        .glitch-text {
+            animation: glitchText 5s infinite;
         }
-
-        @keyframes textGlitch {
+        @keyframes glitchText {
             0%, 97%, 100% { opacity: 1; transform: translateX(0); }
             97.5% { opacity: 0.5; transform: translateX(-2px); }
             98% { opacity: 1; transform: translateX(2px); }
-            98.5% { opacity: 0.8; transform: translateX(0); }
         }
 
         .ability-section {
@@ -806,16 +664,13 @@
             font-size: 0.9rem;
             line-height: 1.8;
         }
-
         .quote-section .alt {
             color: var(--text-dim);
             font-size: 0.85rem;
         }
 
-        /* Organization Card */
-        .org-card {
-            animation: contentFade 0.5s ease;
-        }
+        /* Org Card */
+        .org-card { animation: fadeIn 0.5s ease; }
 
         .org-header {
             display: flex;
@@ -832,10 +687,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
         }
 
-        .org-icon .redacted-small {
+        .redacted-small {
             font-family: 'Share Tech Mono', monospace;
             font-size: 0.5rem;
             color: var(--blood-red);
@@ -885,16 +739,14 @@
             line-height: 1.7;
         }
 
-        .truth-box .censored {
+        .censored {
             background: var(--blood-red);
             color: var(--blood-red);
             padding: 0 5px;
         }
 
         /* Timeline */
-        .timeline-section {
-            animation: contentFade 0.5s ease;
-        }
+        .timeline-section { animation: fadeIn 0.5s ease; }
 
         .timeline-title {
             font-family: 'Bebas Neue', sans-serif;
@@ -908,13 +760,11 @@
             position: relative;
             padding-left: 30px;
         }
-
         .timeline::before {
             content: '';
             position: absolute;
             left: 8px;
-            top: 0;
-            bottom: 0;
+            top: 0; bottom: 0;
             width: 1px;
             background: linear-gradient(180deg, var(--bone) 0%, var(--blood-red) 100%);
         }
@@ -923,7 +773,6 @@
             position: relative;
             padding-bottom: 30px;
         }
-
         .timeline-item::before {
             content: '';
             position: absolute;
@@ -934,10 +783,7 @@
             background: var(--bone);
             border: 2px solid var(--bg-dark);
         }
-
-        .timeline-item.dark::before {
-            background: var(--blood-red);
-        }
+        .timeline-item.dark::before { background: var(--blood-red); }
 
         .timeline-year {
             font-family: 'Share Tech Mono', monospace;
@@ -945,10 +791,7 @@
             color: var(--text-dim);
             margin-bottom: 8px;
         }
-
-        .timeline-item.dark .timeline-year {
-            color: var(--blood-red);
-        }
+        .timeline-item.dark .timeline-year { color: var(--blood-red); }
 
         .timeline-event {
             font-weight: 500;
@@ -963,23 +806,11 @@
         }
 
         /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-darker); }
+        ::-webkit-scrollbar-thumb { background: var(--bone); }
 
-        ::-webkit-scrollbar-track {
-            background: var(--bg-darker);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--bone);
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--text-dim);
-        }
-
-        /* Responsive */
+        /* Mobile */
         @media (max-width: 900px) {
             .sidebar { display: none; }
             .content-area { margin-left: 0; }
@@ -991,9 +822,7 @@
         .mobile-nav {
             display: none;
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
+            bottom: 0; left: 0; right: 0;
             background: rgba(0,0,0,0.98);
             border-top: 1px solid rgba(255,255,255,0.05);
             padding: 8px;
@@ -1001,14 +830,9 @@
             gap: 5px;
             overflow-x: auto;
         }
-
         @media (max-width: 900px) {
-            .mobile-nav {
-                display: flex;
-            }
-            .file-system {
-                padding-bottom: 60px;
-            }
+            .mobile-nav { display: flex; }
+            .file-system { padding-bottom: 60px; }
         }
 
         .mobile-nav button {
@@ -1021,7 +845,6 @@
             cursor: pointer;
             font-family: 'Share Tech Mono', monospace;
         }
-
         .mobile-nav button.active {
             background: var(--blood-red);
             color: #fff;
@@ -1031,11 +854,9 @@
 <body>
     <!-- TEASER -->
     <div id="teaser">
-        <!-- Letterbox bars -->
         <div class="letterbox top"></div>
         <div class="letterbox bottom"></div>
         
-        <!-- Floating particles -->
         <div class="particles">
             <div class="particle"></div>
             <div class="particle"></div>
@@ -1044,83 +865,73 @@
             <div class="particle"></div>
         </div>
 
+        <!-- Slide 0 -->
         <div class="slide active" data-slide="0">
-            <div class="cinematic-text">
-                <span class="typewriter" data-delay="0">그들은 말한다.</span>
-            </div>
+            <div class="typo-whisper fade-up">그들은 말한다.</div>
         </div>
 
+        <!-- Slide 1 -->
         <div class="slide" data-slide="1">
-            <div class="cinematic-text">
-                <span class="typewriter glow-text" data-delay="0">"꿈이 피어나는 곳"</span>
-            </div>
-            <div class="subtitle-text">
-                <span class="fade-in" data-delay="800">EDEN</span>
-            </div>
+            <div class="typo-quote fade-up">"꿈이 피어나는 곳"</div>
+            <div class="typo-brand fade-up d1">EDEN</div>
         </div>
 
+        <!-- Slide 2 -->
         <div class="slide" data-slide="2">
-            <div class="cinematic-text small">
-                <span class="typewriter" data-delay="0">마법소녀.</span><br>
-                <span class="typewriter" data-delay="600">세상을 지키는 희망.</span>
+            <div class="typo-statement fade-up">
+                마법소녀.<br>
+                세상을 지키는 <span class="hl">희망</span>.
             </div>
         </div>
 
+        <!-- Slide 3 -->
         <div class="slide" data-slide="3">
-            <div class="impact-text glitch" data-text="거짓말.">거짓말.</div>
+            <div class="typo-impact glitch" data-text="거짓말.">거짓말.</div>
         </div>
 
+        <!-- Slide 4 -->
         <div class="slide" data-slide="4">
-            <div class="cinematic-text small">
-                <span class="typewriter" data-delay="0">그들은</span>
-                <span class="typewriter highlight-word" data-delay="400">상품</span>
-                <span class="typewriter" data-delay="600">이다.</span>
+            <div class="typo-statement fade-up">
+                그들은 <span class="hl">상품</span>이다.
             </div>
         </div>
 
+        <!-- Slide 5 -->
         <div class="slide" data-slide="5">
-            <div class="multi-line">
-                <div class="line-reveal" data-delay="0">통제되고</div>
-                <div class="line-reveal" data-delay="400">소비되고</div>
-                <div class="line-reveal highlight-word" data-delay="800">폐기된다.</div>
+            <div class="typo-list">
+                <div class="fade-up">통제되고</div>
+                <div class="fade-up d1">소비되고</div>
+                <div class="fade-up d2 hl">폐기된다.</div>
             </div>
         </div>
 
+        <!-- Slide 6 -->
         <div class="slide" data-slide="6">
-            <div class="cinematic-text small">
-                <span class="typewriter dim" data-delay="0">진실을 아는 자들은</span>
-            </div>
-            <div class="impact-text delayed">오염체</div>
-            <div class="cinematic-text small">
-                <span class="typewriter dim" data-delay="1200">라 불린다.</span>
-            </div>
+            <div class="typo-whisper dim fade-up">진실을 아는 자들은</div>
+            <div class="typo-impact fade-up d1" style="font-size: clamp(3rem,12vw,9rem);">오염체</div>
+            <div class="typo-whisper dim fade-up d2">라 불린다.</div>
         </div>
 
+        <!-- Slide 7 -->
         <div class="slide" data-slide="7">
-            <div class="year-reveal">
-                <span class="year-num">3</span>
-                <span class="year-num">1</span>
-                <span class="year-num">2</span>
-                <span class="year-num">5</span>
-            </div>
-            <div class="location-text">SEOUL, KOREA</div>
+            <div class="typo-year fade-up">3125</div>
+            <div class="typo-label fade-up d1">SEOUL, KOREA</div>
         </div>
 
+        <!-- Slide 8 - Final -->
         <div class="slide" data-slide="8">
-            <div class="title-reveal">
-                <div class="title-main glitch" data-text="SIDE">SIDE</div>
-                <div class="title-tagline">— 꿈이 썩어가는 곳 —</div>
-            </div>
-            <div class="button-group">
-                <div class="game-btn" onclick="goToWorldview()">세계관 보기</div>
-                <div class="game-btn primary" onclick="startGame()">플레이하기</div>
+            <div class="typo-title glitch" data-text="SIDE">SIDE</div>
+            <div class="typo-tagline fade-up d1">— 꿈이 썩어가는 곳 —</div>
+            <div class="btn-group">
+                <div class="btn" onclick="goToWorldview()">세계관 보기</div>
+                <div class="btn primary" onclick="startGame()">플레이하기</div>
             </div>
         </div>
 
-        <button class="skip-btn" onclick="skipTeaser()">SKIP ▸</button>
+        <button class="skip-btn" onclick="goToWorldview()">SKIP ▸</button>
     </div>
 
-    <!-- MAIN -->
+    <!-- MAIN CONTENT -->
     <div id="main-content">
         <header class="main-header">
             <div class="logo">SI<span>D</span>E</div>
@@ -1133,7 +944,7 @@
                 
                 <div class="folder open" data-folder="world">
                     <div class="folder-header active" onclick="toggleFolder(this)">
-                        <span class="folder-icon">▸</span>
+                        <span class="folder-icon">▾</span>
                         <span>세계관</span>
                     </div>
                     <div class="folder-files">
@@ -1306,1007 +1117,249 @@
     </div>
 
     <script>
-        const contentData = {
+        // Content Data
+        var contentData = {
             timeline: {
                 path: 'world/timeline',
                 classification: 'classified',
-                html: \`
-                    <div class="timeline-section">
-                        <div class="timeline-title">TIMELINE</div>
-                        <div class="timeline">
-                            <div class="timeline-item">
-                                <div class="timeline-year">2115</div>
-                                <div class="timeline-event">최초 능력자 발견</div>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-year">2120</div>
-                                <div class="timeline-event">히어로 시스템 확립</div>
-                                <div class="timeline-desc">H.A.B / NEXUS 등장. 히어로-빌런 이분법 시작.</div>
-                            </div>
-                            <div class="timeline-item dark">
-                                <div class="timeline-year">2170</div>
-                                <div class="timeline-event">히어로 폭주 사태</div>
-                                <div class="timeline-desc">시스템 붕괴. 암흑기.</div>
-                            </div>
-                            <div class="timeline-item dark" style="opacity: 0.6;">
-                                <div class="timeline-year" style="color: var(--text-dim);">2███</div>
-                                <div class="timeline-event" style="background: var(--blood-red); color: var(--blood-red); display: inline-block; padding: 0 10px;">[REDACTED]</div>
-                                <div class="timeline-desc" style="background: var(--text-dim); color: var(--text-dim); display: inline-block; padding: 0 8px; margin-top: 5px;">████████████████</div>
-                            </div>
-                            <div class="timeline-item dark">
-                                <div class="timeline-year">3012</div>
-                                <div class="timeline-event">마법소녀 체제 확립</div>
-                                <div class="timeline-desc">에덴 설립. 더욱 치밀한 통제 시스템.</div>
-                            </div>
-                            <div class="timeline-item dark">
-                                <div class="timeline-year">3125</div>
-                                <div class="timeline-event">현재</div>
-                            </div>
-                        </div>
-                    </div>
-                \`
+                html: '<div class="timeline-section"><div class="timeline-title">TIMELINE</div><div class="timeline"><div class="timeline-item"><div class="timeline-year">2115</div><div class="timeline-event">최초 능력자 발견</div></div><div class="timeline-item"><div class="timeline-year">2120</div><div class="timeline-event">히어로 시스템 확립</div><div class="timeline-desc">H.A.B / NEXUS 등장. 히어로-빌런 이분법 시작.</div></div><div class="timeline-item dark"><div class="timeline-year">2170</div><div class="timeline-event">히어로 폭주 사태</div><div class="timeline-desc">시스템 붕괴. 암흑기.</div></div><div class="timeline-item dark" style="opacity:0.6"><div class="timeline-year" style="color:#555">2███</div><div class="timeline-event" style="background:var(--blood-red);color:var(--blood-red);display:inline-block;padding:0 10px">[REDACTED]</div><div class="timeline-desc" style="background:#555;color:#555;display:inline-block;padding:0 8px;margin-top:5px">████████████████</div></div><div class="timeline-item dark"><div class="timeline-year">3012</div><div class="timeline-event">마법소녀 체제 확립</div><div class="timeline-desc">에덴 설립. 더욱 치밀한 통제 시스템.</div></div><div class="timeline-item dark"><div class="timeline-year">3125</div><div class="timeline-event">현재</div></div></div></div>'
             },
-
             eden: {
                 path: 'orgs/eden',
                 classification: 'classified',
-                html: `
-                    <div class="org-card">
-                        <div class="org-header">
-                            <div class="org-icon"><span class="redacted-small">[LOGO]</span></div>
-                            <div>
-                                <div class="org-title">EDEN</div>
-                                <div class="org-subtitle">"Where Dreams Bloom"</div>
-                            </div>
-                        </div>
-                        <div class="org-desc">마법소녀 관리 본부. 스카우트, 등급 관리, 브랜드화.</div>
-                        <div class="truth-box">
-                            <div class="truth-title">// CLASSIFIED</div>
-                            <p>철저한 <span class="censored">통제</span>. 능력자의 <span class="censored">상품화</span>. 쓸모없어지면 <span class="censored">폐기</span>.<br><br>평가: 인기도 50% / 전투 20% / 이미지 20% / 매뉴얼 10%</p>
-                        </div>
-                    </div>
-                `
+                html: '<div class="org-card"><div class="org-header"><div class="org-icon"><span class="redacted-small">[LOGO]</span></div><div><div class="org-title">EDEN</div><div class="org-subtitle">"Where Dreams Bloom"</div></div></div><div class="org-desc">마법소녀 관리 본부. 스카우트, 등급 관리, 브랜드화.</div><div class="truth-box"><div class="truth-title">// CLASSIFIED</div><p>철저한 <span class="censored">통제</span>. 능력자의 <span class="censored">상품화</span>. 쓸모없어지면 <span class="censored">폐기</span>.<br><br>평가: 인기도 50% / 전투 20% / 이미지 20% / 매뉴얼 10%</p></div></div>'
             },
             purelight: {
                 path: 'orgs/purelight',
                 classification: 'classified',
-                html: `
-                    <div class="org-card">
-                        <div class="org-header">
-                            <div class="org-icon"><span class="redacted-small">[LOGO]</span></div>
-                            <div>
-                                <div class="org-title">PURELIGHT</div>
-                                <div class="org-subtitle">퓨어라이트</div>
-                            </div>
-                        </div>
-                        <div class="org-desc">마법소녀 전문 미디어. 유일한 공식 언론.</div>
-                        <div class="truth-box">
-                            <div class="truth-title">// CLASSIFIED</div>
-                            <p>여론 조작. 진실 은폐. 모든 사고는 "빌런 탓".</p>
-                        </div>
-                    </div>
-                `
+                html: '<div class="org-card"><div class="org-header"><div class="org-icon"><span class="redacted-small">[LOGO]</span></div><div><div class="org-title">PURELIGHT</div><div class="org-subtitle">퓨어라이트</div></div></div><div class="org-desc">마법소녀 전문 미디어. 유일한 공식 언론.</div><div class="truth-box"><div class="truth-title">// CLASSIFIED</div><p>여론 조작. 진실 은폐. 모든 사고는 "빌런 탓".</p></div></div>'
             },
             archive: {
                 path: 'orgs/eternal-archive',
                 classification: 'classified',
-                html: `
-                    <div class="org-card">
-                        <div class="org-header">
-                            <div class="org-icon"><span class="redacted-small">[LOGO]</span></div>
-                            <div>
-                                <div class="org-title">ETERNAL ARCHIVE</div>
-                                <div class="org-subtitle">이터널 아카이브</div>
-                            </div>
-                        </div>
-                        <div class="org-desc">대외: 마법소녀 추모관. A~Z 구역.</div>
-                        <div class="truth-box">
-                            <div class="truth-title">// CLASSIFIED</div>
-                            <p>실제: <span class="censored">폐기</span> 시설.<br>재판관들은 이유도 모른 채 "재판"을 한다.</p>
-                        </div>
-                    </div>
-                `
+                html: '<div class="org-card"><div class="org-header"><div class="org-icon"><span class="redacted-small">[LOGO]</span></div><div><div class="org-title">ETERNAL ARCHIVE</div><div class="org-subtitle">이터널 아카이브</div></div></div><div class="org-desc">대외: 마법소녀 추모관. A~Z 구역.</div><div class="truth-box"><div class="truth-title">// CLASSIFIED</div><p>실제: <span class="censored">폐기</span> 시설.<br>재판관들은 이유도 모른 채 "재판"을 한다.</p></div></div>'
             },
             corrupted: {
                 path: 'orgs/corrupted',
                 classification: 'restricted',
-                html: `
-                    <div class="org-card">
-                        <div class="org-header">
-                            <div class="org-icon"><span class="redacted-small">[LOGO]</span></div>
-                            <div>
-                                <div class="org-title">CORRUPTED</div>
-                                <div class="org-subtitle">오염체</div>
-                            </div>
-                        </div>
-                        <div class="org-desc">빌런이라 불리는 능력자들.</div>
-                        <div class="truth-box">
-                            <div class="truth-title">// CLASSIFIED</div>
-                            <p>마법소녀와 차이 없음. 단지 브랜딩의 차이.<br>선정 기준: 외모, 이미지, 마케팅 가능성.</p>
-                        </div>
-                    </div>
-                `
+                html: '<div class="org-card"><div class="org-header"><div class="org-icon"><span class="redacted-small">[LOGO]</span></div><div><div class="org-title">CORRUPTED</div><div class="org-subtitle">오염체</div></div></div><div class="org-desc">빌런이라 불리는 능력자들.</div><div class="truth-box"><div class="truth-title">// CLASSIFIED</div><p>마법소녀와 차이 없음. 단지 브랜딩의 차이.<br>선정 기준: 외모, 이미지, 마케팅 가능성.</p></div></div>'
             },
-
             'han-seojin': {
                 path: 'eden/staff/han-seojin',
                 classification: 'classified',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>한서진</h2>
-                            <div class="profile-subtitle">에덴 원장</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">43</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">광신적, 완벽주의, 통제적</div></div>
-                            </div>
-                            <div class="quote-section">"행복하지 않다고요? 치료실로 보내세요."</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>한서진</h2><div class="profile-subtitle">에덴 원장</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">43</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">광신적, 완벽주의, 통제적</div></div></div><div class="quote-section">"행복하지 않다고요? 치료실로 보내세요."</div></div></div>'
             },
             'park-junhyuk': {
                 path: 'eden/staff/park-junhyuk',
                 classification: 'classified',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>박준혁</h2>
-                            <div class="profile-subtitle">마케팅 이사</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">32</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">냉철, 계산적, 효율중심</div></div>
-                            </div>
-                            <div class="quote-section">"야, 쟤 울라고 해. 펑펑 울어야 관심이 몰릴거 아니야."</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>박준혁</h2><div class="profile-subtitle">마케팅 이사</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">32</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">냉철, 계산적, 효율중심</div></div></div><div class="quote-section">"야, 쟤 울라고 해. 펑펑 울어야 관심이 몰릴거 아니야."</div></div></div>'
             },
             'yoon-mirae': {
                 path: 'eden/staff/yoon-mirae',
                 classification: 'classified',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>윤미래</h2>
-                            <div class="profile-subtitle">멘탈케어 담당</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">30</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value"><span class="glitch-text">위선적</span>, 가스라이팅</div></div>
-                            </div>
-                            <div class="quote-section">"많이 아팠지? 선생님한테 다 말해보렴."</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>윤미래</h2><div class="profile-subtitle">멘탈케어 담당</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">30</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value"><span class="glitch-text">위선적</span>, 가스라이팅</div></div></div><div class="quote-section">"많이 아팠지? 선생님한테 다 말해보렴."</div></div></div>'
             },
             'lee-chaewon': {
                 path: 'eden/staff/lee-chaewon',
                 classification: 'restricted',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>이채원</h2>
-                            <div class="profile-subtitle">인사 담당 이사</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">28</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">동정적, 회피성, 우유부단</div></div>
-                            </div>
-                            <div class="quote-section">"미안해요... 정말 미안해요... 하지만 저도 어쩔 수가 없어요."</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>이채원</h2><div class="profile-subtitle">인사 담당 이사</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">28</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">동정적, 회피성, 우유부단</div></div></div><div class="quote-section">"미안해요... 정말 미안해요... 하지만 저도 어쩔 수가 없어요."</div></div></div>'
             },
             'park-jiwon': {
                 path: 'eden/staff/park-jiwon',
                 classification: 'public',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>박지원</h2>
-                            <div class="profile-subtitle">매니저</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">25</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">헌신적, 다정한, 순진한</div></div>
-                                <div class="info-item"><div class="info-label">NOTE</div><div class="info-value">내부 사정을 모름</div></div>
-                            </div>
-                            <div class="quote-section">"다들 조금만 힘내자! 끝나고 내가 맛있는 거 사줄게!"</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>박지원</h2><div class="profile-subtitle">매니저</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">25</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">헌신적, 다정한, 순진한</div></div><div class="info-item"><div class="info-label">NOTE</div><div class="info-value">내부 사정을 모름</div></div></div><div class="quote-section">"다들 조금만 힘내자! 끝나고 내가 맛있는 거 사줄게!"</div></div></div>'
             },
-
             'jung-hyeyeon': {
                 path: 'magical-girls/s-rank/jung-hyeyeon',
                 classification: 'classified',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>정혜연 <span class="rank-badge rank-s">S</span></h2>
-                            <div class="profile-subtitle">에덴의 센터</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">18</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value"><span class="glitch-text">소시오패스</span>, 무감정</div></div>
-                            </div>
-                            <div class="ability-section">
-                                <div class="ability-title">// ABILITY</div>
-                                <div class="ability-name">트라우마 증폭</div>
-                            </div>
-                            <div class="quote-section">
-                                "약속해요! 모두를 지킬게요♡"<br>
-                                <span class="alt">(무표정으로) "연출 끝났지? 나 먼저 차에 가 있는다."</span>
-                            </div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>정혜연 <span class="rank-badge rank-s">S</span></h2><div class="profile-subtitle">에덴의 센터</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">18</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value"><span class="glitch-text">소시오패스</span>, 무감정</div></div></div><div class="ability-section"><div class="ability-title">// ABILITY</div><div class="ability-name">트라우마 증폭</div></div><div class="quote-section">"약속해요! 모두를 지킬게요♡"<br><span class="alt">(무표정으로) "연출 끝났지? 나 먼저 차에 가 있는다."</span></div></div></div>'
             },
             'lee-seoyeon': {
                 path: 'magical-girls/s-rank/lee-seoyeon',
                 classification: 'classified',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>이서연 <span class="rank-badge rank-s">S</span></h2>
-                            <div class="profile-subtitle">S급 마법소녀</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">20</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">책임감, 카리스마, 헌신적</div></div>
-                            </div>
-                            <div class="ability-section">
-                                <div class="ability-title">// ABILITY</div>
-                                <div class="ability-name">마력 포격</div>
-                                <div class="ability-desc">응축된 에너지 발사</div>
-                                <div class="penalty-box">
-                                    <div class="penalty-title">⚠ PENALTY</div>
-                                    <p>신체 붕괴 — 혈관 파열 등 내상</p>
-                                </div>
-                            </div>
-                            <div class="quote-section">"물러서! 여긴 내가 막을 테니까 너희는 피해!"</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>이서연 <span class="rank-badge rank-s">S</span></h2><div class="profile-subtitle">S급 마법소녀</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">20</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">책임감, 카리스마, 헌신적</div></div></div><div class="ability-section"><div class="ability-title">// ABILITY</div><div class="ability-name">마력 포격</div><div class="ability-desc">응축된 에너지 발사</div><div class="penalty-box"><div class="penalty-title">⚠ PENALTY</div><p>신체 붕괴 — 혈관 파열 등 내상</p></div></div><div class="quote-section">"물러서! 여긴 내가 막을 테니까 너희는 피해!"</div></div></div>'
             },
             'kwon-chaerin': {
                 path: 'magical-girls/s-rank/kwon-chaerin',
                 classification: 'classified',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>권채린 <span class="rank-badge rank-s">S</span></h2>
-                            <div class="profile-subtitle">절대 방어 탱커</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">18</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">과묵, 냉정, 자기희생</div></div>
-                            </div>
-                            <div class="ability-section">
-                                <div class="ability-title">// ABILITY</div>
-                                <div class="ability-name">절대 방어막</div>
-                                <div class="penalty-box">
-                                    <div class="penalty-title">⚠ PENALTY</div>
-                                    <p>감각 상실 — 오감 일시 소실</p>
-                                </div>
-                            </div>
-                            <div class="quote-section">"...지킬게요."</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>권채린 <span class="rank-badge rank-s">S</span></h2><div class="profile-subtitle">절대 방어 탱커</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">18</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">과묵, 냉정, 자기희생</div></div></div><div class="ability-section"><div class="ability-title">// ABILITY</div><div class="ability-name">절대 방어막</div><div class="penalty-box"><div class="penalty-title">⚠ PENALTY</div><p>감각 상실 — 오감 일시 소실</p></div></div><div class="quote-section">"...지킬게요."</div></div></div>'
             },
-
             'ha-yujeong': {
                 path: 'magical-girls/a-rank/ha-yujeong',
                 classification: 'restricted',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>하유정 <span class="rank-badge rank-a">A</span></h2>
-                            <div class="profile-subtitle">A급 마법소녀</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">22</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">오만함, 예술적</div></div>
-                            </div>
-                            <div class="ability-section">
-                                <div class="ability-title">// ABILITY</div>
-                                <div class="ability-name">금속 변형</div>
-                            </div>
-                            <div class="quote-section">"어머, 이것 봐. 찌그러진 깡통처럼 변해버렸네?"</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>하유정 <span class="rank-badge rank-a">A</span></h2><div class="profile-subtitle">A급 마법소녀</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">22</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">오만함, 예술적</div></div></div><div class="ability-section"><div class="ability-title">// ABILITY</div><div class="ability-name">금속 변형</div></div><div class="quote-section">"어머, 이것 봐. 찌그러진 깡통처럼 변해버렸네?"</div></div></div>'
             },
             'ahn-siwoo': {
                 path: 'magical-girls/a-rank/ahn-siwoo',
                 classification: 'classified',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>안시우 / 아리엘 <span class="rank-badge rank-a">A</span></h2>
-                            <div class="profile-subtitle">A급 마법소녀</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">19</div></div>
-                                <div class="info-item"><div class="info-label">GENDER</div><div class="info-value"><span class="glitch-text">남↔여</span></div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">소심(본체) / 나르시시스트(변신)</div></div>
-                            </div>
-                            <div class="ability-section">
-                                <div class="ability-title">// ABILITY</div>
-                                <div class="ability-name">기계 해킹</div>
-                            </div>
-                            <div class="quote-section">
-                                "이 아리엘님이 다 해결해 줬으니까 감사하라고!"<br>
-                                <span class="alt">"죄, 죄송합니다..."</span>
-                            </div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>안시우 / 아리엘 <span class="rank-badge rank-a">A</span></h2><div class="profile-subtitle">A급 마법소녀</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">19</div></div><div class="info-item"><div class="info-label">GENDER</div><div class="info-value"><span class="glitch-text">남↔여</span></div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">소심(본체) / 나르시시스트(변신)</div></div></div><div class="ability-section"><div class="ability-title">// ABILITY</div><div class="ability-name">기계 해킹</div></div><div class="quote-section">"이 아리엘님이 다 해결해 줬으니까 감사하라고!"<br><span class="alt">"죄, 죄송합니다..."</span></div></div></div>'
             },
             'song-aram': {
                 path: 'magical-girls/a-rank/song-aram',
                 classification: 'restricted',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>송아람 <span class="rank-badge rank-a">A</span></h2>
-                            <div class="profile-subtitle">무당 집안</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">21</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">4차원, 낙천적, 영적</div></div>
-                            </div>
-                            <div class="ability-section">
-                                <div class="ability-title">// ABILITY</div>
-                                <div class="ability-name">영혼 교감</div>
-                                <div class="penalty-box">
-                                    <div class="penalty-title">⚠ PENALTY</div>
-                                    <p>두통</p>
-                                </div>
-                            </div>
-                            <div class="quote-section">"아 몰라몰라, 오늘 점괘가 안 좋아."</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>송아람 <span class="rank-badge rank-a">A</span></h2><div class="profile-subtitle">무당 집안</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">21</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">4차원, 낙천적, 영적</div></div></div><div class="ability-section"><div class="ability-title">// ABILITY</div><div class="ability-name">영혼 교감</div><div class="penalty-box"><div class="penalty-title">⚠ PENALTY</div><p>두통</p></div></div><div class="quote-section">"아 몰라몰라, 오늘 점괘가 안 좋아."</div></div></div>'
             },
             'seo-yeeun': {
                 path: 'magical-girls/a-rank/seo-yeeun',
                 classification: 'restricted',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>서예은 <span class="rank-badge rank-a">A</span></h2>
-                            <div class="profile-subtitle">A급 마법소녀</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">19</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">온화, 상냥, <span class="glitch-text">집착</span></div></div>
-                            </div>
-                            <div class="ability-section">
-                                <div class="ability-title">// ABILITY</div>
-                                <div class="ability-name">식물 급속 성장</div>
-                                <div class="penalty-box">
-                                    <div class="penalty-title">⚠ PENALTY</div>
-                                    <p>수분 고갈</p>
-                                </div>
-                            </div>
-                            <div class="quote-section">"생명은 정말 아름답지 않나요? 자라나라..."</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>서예은 <span class="rank-badge rank-a">A</span></h2><div class="profile-subtitle">A급 마법소녀</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">19</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">온화, 상냥, <span class="glitch-text">집착</span></div></div></div><div class="ability-section"><div class="ability-title">// ABILITY</div><div class="ability-name">식물 급속 성장</div><div class="penalty-box"><div class="penalty-title">⚠ PENALTY</div><p>수분 고갈</p></div></div><div class="quote-section">"생명은 정말 아름답지 않나요? 자라나라..."</div></div></div>'
             },
             'shin-onyu': {
                 path: 'magical-girls/a-rank/shin-onyu',
                 classification: 'restricted',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>신온유 <span class="rank-badge rank-a">A</span></h2>
-                            <div class="profile-subtitle">도주 특화</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">16</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">겁쟁이, 생존본능, 불안</div></div>
-                            </div>
-                            <div class="ability-section">
-                                <div class="ability-title">// ABILITY</div>
-                                <div class="ability-name">위상 변화</div>
-                                <div class="ability-desc">신체를 액체/기체로 변환</div>
-                            </div>
-                            <div class="quote-section">"사, 살려주세요...!"</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>신온유 <span class="rank-badge rank-a">A</span></h2><div class="profile-subtitle">도주 특화</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">16</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">겁쟁이, 생존본능, 불안</div></div></div><div class="ability-section"><div class="ability-title">// ABILITY</div><div class="ability-name">위상 변화</div><div class="ability-desc">신체를 액체/기체로 변환</div></div><div class="quote-section">"사, 살려주세요...!"</div></div></div>'
             },
-
             'ryu-saena': {
                 path: 'magical-girls/b-rank/ryu-saena',
                 classification: 'public',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>류새나 <span class="rank-badge rank-b">B</span></h2>
-                            <div class="profile-subtitle">B급 마법소녀</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">19</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">야성적, 단순, 순수</div></div>
-                            </div>
-                            <div class="ability-section">
-                                <div class="ability-title">// ABILITY</div>
-                                <div class="ability-name">자연 동화</div>
-                            </div>
-                            <div class="quote-section"><span class="alt">[수화 사용]</span></div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>류새나 <span class="rank-badge rank-b">B</span></h2><div class="profile-subtitle">B급 마법소녀</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">19</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">야성적, 단순, 순수</div></div></div><div class="ability-section"><div class="ability-title">// ABILITY</div><div class="ability-name">자연 동화</div></div><div class="quote-section"><span class="alt">[수화 사용]</span></div></div></div>'
             },
             'im-sori': {
                 path: 'magical-girls/b-rank/im-sori',
                 classification: 'public',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>임소리 <span class="rank-badge rank-b">B</span></h2>
-                            <div class="profile-subtitle">B급 마법소녀</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">19</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">예민함, 계획적, 까칠함</div></div>
-                            </div>
-                            <div class="ability-section">
-                                <div class="ability-title">// ABILITY</div>
-                                <div class="ability-name">음파 충격</div>
-                            </div>
-                            <div class="quote-section">"조용히 해! 시끄럽다고!"</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>임소리 <span class="rank-badge rank-b">B</span></h2><div class="profile-subtitle">B급 마법소녀</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">19</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">예민함, 계획적, 까칠함</div></div></div><div class="ability-section"><div class="ability-title">// ABILITY</div><div class="ability-name">음파 충격</div></div><div class="quote-section">"조용히 해! 시끄럽다고!"</div></div></div>'
             },
             'baek-ya': {
                 path: 'magical-girls/b-rank/baek-ya',
                 classification: 'public',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>백야 <span class="rank-badge rank-b">B</span></h2>
-                            <div class="profile-subtitle">B급 마법소녀</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">22</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">게으름, 나른함, 무기력</div></div>
-                            </div>
-                            <div class="ability-section">
-                                <div class="ability-title">// ABILITY</div>
-                                <div class="ability-name">생체 리듬 조작</div>
-                                <div class="penalty-box">
-                                    <div class="penalty-title">⚠ PENALTY</div>
-                                    <p>강제 수면</p>
-                                </div>
-                            </div>
-                            <div class="quote-section">"하아암... 귀찮아."</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>백야 <span class="rank-badge rank-b">B</span></h2><div class="profile-subtitle">B급 마법소녀</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">22</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">게으름, 나른함, 무기력</div></div></div><div class="ability-section"><div class="ability-title">// ABILITY</div><div class="ability-name">생체 리듬 조작</div><div class="penalty-box"><div class="penalty-title">⚠ PENALTY</div><p>강제 수면</p></div></div><div class="quote-section">"하아암... 귀찮아."</div></div></div>'
             },
             'ban-seola': {
                 path: 'magical-girls/b-rank/ban-seola',
                 classification: 'public',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>반설아 <span class="rank-badge rank-b">B</span></h2>
-                            <div class="profile-subtitle">B급 마법소녀</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">18</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">차분, 관조적, 신중</div></div>
-                            </div>
-                            <div class="ability-section">
-                                <div class="ability-title">// ABILITY</div>
-                                <div class="ability-name">대기 조작</div>
-                                <div class="penalty-box">
-                                    <div class="penalty-title">⚠ PENALTY</div>
-                                    <p>호흡곤란</p>
-                                </div>
-                            </div>
-                            <div class="quote-section">"하아... 산소 캔... 좀 주세요..."</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>반설아 <span class="rank-badge rank-b">B</span></h2><div class="profile-subtitle">B급 마법소녀</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">18</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">차분, 관조적, 신중</div></div></div><div class="ability-section"><div class="ability-title">// ABILITY</div><div class="ability-name">대기 조작</div><div class="penalty-box"><div class="penalty-title">⚠ PENALTY</div><p>호흡곤란</p></div></div><div class="quote-section">"하아... 산소 캔... 좀 주세요..."</div></div></div>'
             },
             'kang-seorin': {
                 path: 'magical-girls/b-rank/kang-seorin',
                 classification: 'public',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>강서린 <span class="rank-badge rank-b">B</span></h2>
-                            <div class="profile-subtitle">B급 마법소녀</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">19</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">과묵, 냉소적 (실제로는 여림)</div></div>
-                            </div>
-                            <div class="ability-section">
-                                <div class="ability-title">// ABILITY</div>
-                                <div class="ability-name">온도 조절</div>
-                                <div class="penalty-box">
-                                    <div class="penalty-title">⚠ PENALTY</div>
-                                    <p>저체온증</p>
-                                </div>
-                            </div>
-                            <div class="quote-section">"담요 내놔."</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>강서린 <span class="rank-badge rank-b">B</span></h2><div class="profile-subtitle">B급 마법소녀</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">19</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">과묵, 냉소적 (실제로는 여림)</div></div></div><div class="ability-section"><div class="ability-title">// ABILITY</div><div class="ability-name">온도 조절</div><div class="penalty-box"><div class="penalty-title">⚠ PENALTY</div><p>저체온증</p></div></div><div class="quote-section">"담요 내놔."</div></div></div>'
             },
             'jung-dohee': {
                 path: 'magical-girls/b-rank/jung-dohee',
                 classification: 'public',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>정도희 <span class="rank-badge rank-b">B</span></h2>
-                            <div class="profile-subtitle">B급 마법소녀</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">18</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">다혈질, 단순무식, 의리</div></div>
-                            </div>
-                            <div class="ability-section">
-                                <div class="ability-title">// ABILITY</div>
-                                <div class="ability-name">열에너지 방출</div>
-                                <div class="penalty-box">
-                                    <div class="penalty-title">⚠ PENALTY</div>
-                                    <p>신체 화상</p>
-                                </div>
-                            </div>
-                            <div class="quote-section">"다 불태워버려! 덤벼 이 자식들아!"</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>정도희 <span class="rank-badge rank-b">B</span></h2><div class="profile-subtitle">B급 마법소녀</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">18</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">다혈질, 단순무식, 의리</div></div></div><div class="ability-section"><div class="ability-title">// ABILITY</div><div class="ability-name">열에너지 방출</div><div class="penalty-box"><div class="penalty-title">⚠ PENALTY</div><p>신체 화상</p></div></div><div class="quote-section">"다 불태워버려! 덤벼 이 자식들아!"</div></div></div>'
             },
             'oh-jieun': {
                 path: 'magical-girls/b-rank/oh-jieun',
                 classification: 'restricted',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>오지은 <span class="rank-badge rank-b">B</span></h2>
-                            <div class="profile-subtitle">에덴 유일 힐러</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">24</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">존댓말, 사려깊은, 자기희생</div></div>
-                            </div>
-                            <div class="ability-section">
-                                <div class="ability-title">// ABILITY</div>
-                                <div class="ability-name">생명 양도</div>
-                                <div class="penalty-box">
-                                    <div class="penalty-title">⚠ PENALTY</div>
-                                    <p><span class="glitch-text">수명 단축</span> — 급격한 노화</p>
-                                </div>
-                            </div>
-                            <div class="quote-section">"제가 치료할게요. 부디 움직이지 마세요."</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>오지은 <span class="rank-badge rank-b">B</span></h2><div class="profile-subtitle">에덴 유일 힐러</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">24</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">존댓말, 사려깊은, 자기희생</div></div></div><div class="ability-section"><div class="ability-title">// ABILITY</div><div class="ability-name">생명 양도</div><div class="penalty-box"><div class="penalty-title">⚠ PENALTY</div><p><span class="glitch-text">수명 단축</span> — 급격한 노화</p></div></div><div class="quote-section">"제가 치료할게요. 부디 움직이지 마세요."</div></div></div>'
             },
-
             'yoo-hwayoung': {
                 path: 'magical-girls/c-rank/yoo-hwayoung',
                 classification: 'restricted',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>유화영 <span class="rank-badge rank-c">C</span></h2>
-                            <div class="profile-subtitle">C급 마법소녀</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">23</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">무감각(연기), 강인함</div></div>
-                            </div>
-                            <div class="ability-section">
-                                <div class="ability-title">// ABILITY</div>
-                                <div class="ability-name">골격 제어</div>
-                                <div class="ability-desc">뼈를 흉기로 사용</div>
-                                <div class="penalty-box">
-                                    <div class="penalty-title">⚠ PENALTY</div>
-                                    <p><span class="glitch-text">극심한 고통</span></p>
-                                </div>
-                            </div>
-                            <div class="quote-section">"준비됐어. 처리할게."</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>유화영 <span class="rank-badge rank-c">C</span></h2><div class="profile-subtitle">C급 마법소녀</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">23</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">무감각(연기), 강인함</div></div></div><div class="ability-section"><div class="ability-title">// ABILITY</div><div class="ability-name">골격 제어</div><div class="ability-desc">뼈를 흉기로 사용</div><div class="penalty-box"><div class="penalty-title">⚠ PENALTY</div><p><span class="glitch-text">극심한 고통</span></p></div></div><div class="quote-section">"준비됐어. 처리할게."</div></div></div>'
             },
             'baek-hayul': {
                 path: 'magical-girls/c-rank/baek-hayul',
                 classification: 'restricted',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>백하율 <span class="rank-badge rank-c">C</span></h2>
-                            <div class="profile-subtitle">C급 마법소녀</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">21</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">염세적, 우울, 비관적</div></div>
-                            </div>
-                            <div class="ability-section">
-                                <div class="ability-title">// ABILITY</div>
-                                <div class="ability-name">인과율 간섭</div>
-                                <div class="ability-desc">본인에게만 보이는 실</div>
-                            </div>
-                            <div class="quote-section">"...실을 튕겼어."</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>백하율 <span class="rank-badge rank-c">C</span></h2><div class="profile-subtitle">C급 마법소녀</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">21</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">염세적, 우울, 비관적</div></div></div><div class="ability-section"><div class="ability-title">// ABILITY</div><div class="ability-name">인과율 간섭</div><div class="ability-desc">본인에게만 보이는 실</div></div><div class="quote-section">"...실을 튕겼어."</div></div></div>'
             },
             'joo-gaeun': {
                 path: 'magical-girls/c-rank/joo-gaeun',
                 classification: 'classified',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>주가은 <span class="rank-badge rank-c">C</span></h2>
-                            <div class="profile-subtitle">C급 마법소녀</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">17</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">겁쟁이, 죄책감, 울보</div></div>
-                            </div>
-                            <div class="ability-section">
-                                <div class="ability-title">// ABILITY</div>
-                                <div class="ability-name"><span class="glitch-text">키메라 생성</span></div>
-                                <div class="ability-desc">유기물 재조립</div>
-                            </div>
-                            <div class="quote-section">"미안해... 괴물로 만들어서 미안해..."</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>주가은 <span class="rank-badge rank-c">C</span></h2><div class="profile-subtitle">C급 마법소녀</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">17</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">겁쟁이, 죄책감, 울보</div></div></div><div class="ability-section"><div class="ability-title">// ABILITY</div><div class="ability-name"><span class="glitch-text">키메라 생성</span></div><div class="ability-desc">유기물 재조립</div></div><div class="quote-section">"미안해... 괴물로 만들어서 미안해..."</div></div></div>'
             },
-
             'choi-seoyoung': {
                 path: 'purelight/choi-seoyoung',
                 classification: 'classified',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>최서영</h2>
-                            <div class="profile-subtitle">퓨어라이트 국장</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">38</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">원칙주의, 융통성없음</div></div>
-                                <div class="info-item"><div class="info-label">NOTE</div><div class="info-value">이름만 공개됨</div></div>
-                            </div>
-                            <div class="quote-section">"편집해."</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>최서영</h2><div class="profile-subtitle">퓨어라이트 국장</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">38</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">원칙주의, 융통성없음</div></div><div class="info-item"><div class="info-label">NOTE</div><div class="info-value">이름만 공개됨</div></div></div><div class="quote-section">"편집해."</div></div></div>'
             },
             'na-yunseo': {
                 path: 'purelight/na-yunseo',
                 classification: 'classified',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>나윤서</h2>
-                            <div class="profile-subtitle">프로듀서</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">23</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">기획력, 연출광, 냉철</div></div>
-                            </div>
-                            <div class="quote-section">"죽기 직전이 시청률 제일 잘 나와. 아직 구출하지 마."</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>나윤서</h2><div class="profile-subtitle">프로듀서</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">23</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">기획력, 연출광, 냉철</div></div></div><div class="quote-section">"죽기 직전이 시청률 제일 잘 나와. 아직 구출하지 마."</div></div></div>'
             },
             'kang-minjun': {
                 path: 'purelight/kang-minjun',
                 classification: 'public',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>강민준</h2>
-                            <div class="profile-subtitle">앵커</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">24</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">밝음, 트렌디, 드립많음</div></div>
-                            </div>
-                            <div class="quote-section">"와우~! S급 마법소녀님의 활약 엄청난데요?"</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>강민준</h2><div class="profile-subtitle">앵커</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">24</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">밝음, 트렌디, 드립많음</div></div></div><div class="quote-section">"와우~! S급 마법소녀님의 활약 엄청난데요?"</div></div></div>'
             },
             'yoon-cheaa': {
                 path: 'purelight/yoon-cheaa',
                 classification: 'public',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>윤채아</h2>
-                            <div class="profile-subtitle">현장 리포터</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">22</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">귀여운척, 유행어남발</div></div>
-                            </div>
-                            <div class="quote-section">"헐 대박!! S급 마법소녀분들이 나타났어요!!ㅠㅠ"</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>윤채아</h2><div class="profile-subtitle">현장 리포터</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">22</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">귀여운척, 유행어남발</div></div></div><div class="quote-section">"헐 대박!! S급 마법소녀분들이 나타났어요!!ㅠㅠ"</div></div></div>'
             },
-
             'judge-a': {
                 path: 'archive/judges/A',
                 classification: 'classified',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>A <span style="color:var(--text-dim);font-size:0.8em;">(AMOR)</span></h2>
-                            <div class="profile-subtitle">A구역 재판관</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">22</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value"><span class="glitch-text">집착</span>, 외로움, 광기</div></div>
-                            </div>
-                            <div class="quote-section">
-                                "저 보러 오신 거죠?♡"<br>
-                                "다른 년들 보지 말고 나만 보라고. 영원히♡"
-                            </div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>A <span style="color:var(--text-dim);font-size:0.8em">(AMOR)</span></h2><div class="profile-subtitle">A구역 재판관</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">22</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value"><span class="glitch-text">집착</span>, 외로움, 광기</div></div></div><div class="quote-section">"저 보러 오신 거죠?♡"<br>"다른 년들 보지 말고 나만 보라고. 영원히♡"</div></div></div>'
             },
             'judge-r': {
                 path: 'archive/judges/R',
                 classification: 'classified',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>R <span style="color:var(--text-dim);font-size:0.8em;">(REBELLION)</span></h2>
-                            <div class="profile-subtitle">R구역 재판관 — 반역자 담당</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">23</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">무감정, 비논리적</div></div>
-                                <div class="info-item"><div class="info-label">NOTE</div><div class="info-value"><span class="glitch-text">환각을 봄</span></div></div>
-                            </div>
-                            <div class="quote-section">
-                                "오늘은 수요일이니까 유죄야."<br>
-                                <span class="alt">"왜냐고? 수요일은 유죄니까."</span>
-                            </div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>R <span style="color:var(--text-dim);font-size:0.8em">(REBELLION)</span></h2><div class="profile-subtitle">R구역 재판관 — 반역자 담당</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">23</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">무감정, 비논리적</div></div><div class="info-item"><div class="info-label">NOTE</div><div class="info-value"><span class="glitch-text">환각을 봄</span></div></div></div><div class="quote-section">"오늘은 수요일이니까 유죄야."<br><span class="alt">"왜냐고? 수요일은 유죄니까."</span></div></div></div>'
             },
             'judge-z': {
                 path: 'archive/judges/Z',
                 classification: 'classified',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>Z <span style="color:var(--text-dim);font-size:0.8em;">(ZERO)</span></h2>
-                            <div class="profile-subtitle">Z구역 — 감금 시설</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value"><span class="glitch-text">100+</span></div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">광기, 기억파편, 시간상실</div></div>
-                                <div class="info-item"><div class="info-label">ALIAS</div><div class="info-value">"그레이"</div></div>
-                            </div>
-                            <div class="quote-section"><span class="alt">[알 수 없는 단어들을 반복 — 뜻은 본인도 모름]</span></div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>Z <span style="color:var(--text-dim);font-size:0.8em">(ZERO)</span></h2><div class="profile-subtitle">Z구역 — 감금 시설</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value"><span class="glitch-text">100+</span></div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">광기, 기억파편, 시간상실</div></div><div class="info-item"><div class="info-label">ALIAS</div><div class="info-value">"그레이"</div></div></div><div class="quote-section"><span class="alt">[알 수 없는 단어들을 반복 — 뜻은 본인도 모름]</span></div></div></div>'
             },
-
             'jin-soyul': {
                 path: 'corrupted/jin-soyul',
                 classification: 'classified',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>진소율</h2>
-                            <div class="profile-subtitle">오염체 — 전직 마법소녀</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">25</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">냉혹, 복수심, 자기파괴</div></div>
-                            </div>
-                            <div class="ability-section">
-                                <div class="ability-title">// ABILITY</div>
-                                <div class="ability-name">생명력 점화</div>
-                                <div class="penalty-box">
-                                    <div class="penalty-title">⚠ PENALTY</div>
-                                    <p><span class="glitch-text">급격한 노화</span></p>
-                                </div>
-                            </div>
-                            <div class="quote-section">"에덴 놈들... 다 죽여버리겠어. 내 목숨을 다 태워서라도."</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>진소율</h2><div class="profile-subtitle">오염체 — 전직 마법소녀</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">25</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">냉혹, 복수심, 자기파괴</div></div></div><div class="ability-section"><div class="ability-title">// ABILITY</div><div class="ability-name">생명력 점화</div><div class="penalty-box"><div class="penalty-title">⚠ PENALTY</div><p><span class="glitch-text">급격한 노화</span></p></div></div><div class="quote-section">"에덴 놈들... 다 죽여버리겠어. 내 목숨을 다 태워서라도."</div></div></div>'
             },
             'han-byeol': {
                 path: 'corrupted/han-byeol',
                 classification: 'restricted',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>한별</h2>
-                            <div class="profile-subtitle">오염체</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">21</div></div>
-                                <div class="info-item"><div class="info-label">GENDER</div><div class="info-value">남↔여</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">약삭빠름, 비열, 두뇌파</div></div>
-                            </div>
-                            <div class="ability-section">
-                                <div class="ability-title">// ABILITY</div>
-                                <div class="ability-name">마찰 계수 조절</div>
-                                <div class="penalty-box">
-                                    <div class="penalty-title">⚠ PENALTY</div>
-                                    <p>멀미</p>
-                                </div>
-                            </div>
-                            <div class="quote-section">"헤헤! 멍청하긴! 거기서 미끄러질 줄 몰랐냐?"</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>한별</h2><div class="profile-subtitle">오염체</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">21</div></div><div class="info-item"><div class="info-label">GENDER</div><div class="info-value">남↔여</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">약삭빠름, 비열, 두뇌파</div></div></div><div class="ability-section"><div class="ability-title">// ABILITY</div><div class="ability-name">마찰 계수 조절</div><div class="penalty-box"><div class="penalty-title">⚠ PENALTY</div><p>멀미</p></div></div><div class="quote-section">"헤헤! 멍청하긴! 거기서 미끄러질 줄 몰랐냐?"</div></div></div>'
             },
             'lee-yun': {
                 path: 'corrupted/lee-yun',
                 classification: 'classified',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>이윤</h2>
-                            <div class="profile-subtitle">오염체</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">19</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value"><span class="glitch-text">이중인격</span>, 불안정, 광기</div></div>
-                            </div>
-                            <div class="ability-section">
-                                <div class="ability-title">// ABILITY</div>
-                                <div class="ability-name">감정 물리화</div>
-                            </div>
-                            <div class="quote-section">
-                                "제발 저 건드리지 마세요..."<br>
-                                <span class="alt" style="color:var(--blood-red);">"아하하하! 다 부서져라!"</span>
-                            </div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>이윤</h2><div class="profile-subtitle">오염체</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">19</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value"><span class="glitch-text">이중인격</span>, 불안정, 광기</div></div></div><div class="ability-section"><div class="ability-title">// ABILITY</div><div class="ability-name">감정 물리화</div></div><div class="quote-section">"제발 저 건드리지 마세요..."<br><span class="alt" style="color:var(--blood-red)">"아하하하! 다 부서져라!"</span></div></div></div>'
             },
-
             'kim-minji': {
                 path: 'civilians/kim-minji',
                 classification: 'public',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>김민지</h2>
-                            <div class="profile-subtitle">정혜연 팬클럽 회장</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">17</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">순수, 맹신, 광적</div></div>
-                            </div>
-                            <div class="quote-section">"혜연 언니는 천사예요! 비난하지 마세요!"</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>김민지</h2><div class="profile-subtitle">정혜연 팬클럽 회장</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">17</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">순수, 맹신, 광적</div></div></div><div class="quote-section">"혜연 언니는 천사예요! 비난하지 마세요!"</div></div></div>'
             },
             'lee-junho': {
                 path: 'civilians/lee-junho',
                 classification: 'public',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>이준호</h2>
-                            <div class="profile-subtitle">회사원</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">28</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">무관심, 냉소, 현실주의</div></div>
-                            </div>
-                            <div class="quote-section">"그냥 쇼잖아. 뭐가 그리 대단하다고."</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>이준호</h2><div class="profile-subtitle">회사원</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">28</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">무관심, 냉소, 현실주의</div></div></div><div class="quote-section">"그냥 쇼잖아. 뭐가 그리 대단하다고."</div></div></div>'
             },
             'choi-arin': {
                 path: 'civilians/choi-arin',
                 classification: 'restricted',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>최아린</h2>
-                            <div class="profile-subtitle">아나운서 지망생</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">34</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">호기심, 의심, 관찰자</div></div>
-                                <div class="info-item"><div class="info-label">NOTE</div><div class="info-value">퓨어라이트 취업 실패</div></div>
-                            </div>
-                            <div class="quote-section">"뭔가 이상해..."</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>최아린</h2><div class="profile-subtitle">아나운서 지망생</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">34</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">호기심, 의심, 관찰자</div></div><div class="info-item"><div class="info-label">NOTE</div><div class="info-value">퓨어라이트 취업 실패</div></div></div><div class="quote-section">"뭔가 이상해..."</div></div></div>'
             },
             'joo-minhyuk': {
                 path: 'civilians/joo-minhyuk',
                 classification: 'restricted',
-                html: `
-                    <div class="profile-card">
-                        <div class="profile-image"><span class="redacted-stamp">REDACTED</span></div>
-                        <div class="profile-info">
-                            <h2>주민혁</h2>
-                            <div class="profile-subtitle">주가은의 오빠</div>
-                            <div class="info-grid">
-                                <div class="info-item"><div class="info-label">AGE</div><div class="info-value">22</div></div>
-                                <div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">걱정, 불안, 죄책감</div></div>
-                            </div>
-                            <div class="quote-section">"가은아..."</div>
-                        </div>
-                    </div>
-                `
+                html: '<div class="profile-card"><div class="profile-image"><span class="redacted-stamp">REDACTED</span></div><div class="profile-info"><h2>주민혁</h2><div class="profile-subtitle">주가은의 오빠</div><div class="info-grid"><div class="info-item"><div class="info-label">AGE</div><div class="info-value">22</div></div><div class="info-item"><div class="info-label">TRAIT</div><div class="info-value">걱정, 불안, 죄책감</div></div></div><div class="quote-section">"가은아..."</div></div></div>'
             }
         };
 
         // Slideshow
         var currentSlide = 0;
         var totalSlides = 9;
-        var slideInterval;
-        var isLastSlide = false;
+        var slideTimer = null;
 
-        function showSlide(n) {
+        function nextSlide() {
             var current = document.querySelector('.slide.active');
             if (current) {
                 current.classList.remove('active');
-                current.classList.add('exit');
-                setTimeout(function() { current.classList.remove('exit'); }, 500);
             }
             
-            var slide = document.querySelector('[data-slide="' + n + '"]');
-            if (slide) {
-                setTimeout(function() { slide.classList.add('active'); }, 100);
-            }
-            
-            // Last slide - stop auto advance
-            if (n === totalSlides - 1) {
-                isLastSlide = true;
-                clearInterval(slideInterval);
-            }
-        }
-
-        function nextSlide() {
             currentSlide++;
+            
             if (currentSlide >= totalSlides) {
+                clearInterval(slideTimer);
                 return;
             }
-            showSlide(currentSlide);
-        }
-
-        function skipTeaser() {
-            clearInterval(slideInterval);
-            goToWorldview();
+            
+            var next = document.querySelector('.slide[data-slide="' + currentSlide + '"]');
+            if (next) {
+                next.classList.add('active');
+            }
         }
 
         function goToWorldview() {
+            clearInterval(slideTimer);
             document.getElementById('teaser').classList.add('hidden');
             document.getElementById('main-content').classList.add('visible');
-            var firstItem = document.querySelector('.file-item.active');
-            showContent('timeline', firstItem);
+            showContent('timeline', document.querySelector('.file-item.active'));
         }
 
         function startGame() {
@@ -2317,7 +1370,8 @@
         function toggleFolder(header) {
             var folder = header.parentElement;
             folder.classList.toggle('open');
-            header.querySelector('.folder-icon').textContent = folder.classList.contains('open') ? '▾' : '▸';
+            var icon = header.querySelector('.folder-icon');
+            icon.textContent = folder.classList.contains('open') ? '▾' : '▸';
         }
 
         function showContent(id, el) {
@@ -2345,7 +1399,8 @@
                 buttons[i].classList.remove('active');
             }
             event.target.classList.add('active');
-            var f = document.querySelector('[data-folder="' + folder + '"]');
+            
+            var f = document.querySelector('.folder[data-folder="' + folder + '"]');
             if (f) {
                 var first = f.querySelector('.file-item');
                 if (first) {
@@ -2358,10 +1413,11 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            showSlide(0);
-            slideInterval = setInterval(nextSlide, 3500);
-        });
+        // Initialize
+        window.onload = function() {
+            slideTimer = setInterval(nextSlide, 3500);
+        };
     </script>
 </body>
 </html>
+
