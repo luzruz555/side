@@ -67,7 +67,7 @@
             z-index: 9998;
         }
 
-        /* ===== TEASER ===== */
+        /* ===== TEASER - GAME CINEMATIC STYLE ===== */
         #teaser {
             position: fixed;
             top: 0;
@@ -75,8 +75,9 @@
             width: 100%;
             height: 100%;
             z-index: 1000;
-            background: var(--bg-darker);
+            background: #000;
             transition: opacity 1.5s ease;
+            overflow: hidden;
         }
 
         #teaser.hidden {
@@ -84,6 +85,50 @@
             pointer-events: none;
         }
 
+        /* Letterbox bars */
+        .letterbox {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 12%;
+            background: #000;
+            z-index: 10;
+        }
+        .letterbox.top { top: 0; }
+        .letterbox.bottom { bottom: 0; }
+
+        /* Floating particles */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--blood-red);
+            opacity: 0.3;
+            animation: floatParticle 15s infinite linear;
+        }
+
+        .particle:nth-child(1) { left: 10%; animation-delay: 0s; animation-duration: 20s; }
+        .particle:nth-child(2) { left: 30%; animation-delay: 3s; animation-duration: 18s; }
+        .particle:nth-child(3) { left: 50%; animation-delay: 6s; animation-duration: 22s; }
+        .particle:nth-child(4) { left: 70%; animation-delay: 2s; animation-duration: 16s; }
+        .particle:nth-child(5) { left: 90%; animation-delay: 5s; animation-duration: 19s; }
+
+        @keyframes floatParticle {
+            0% { transform: translateY(100vh) scale(1); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-100vh) scale(0.5); opacity: 0; }
+        }
+
+        /* Slides */
         .slide {
             position: absolute;
             width: 100%;
@@ -93,59 +138,220 @@
             align-items: center;
             justify-content: center;
             opacity: 0;
-            transition: opacity 1s ease;
-            background: var(--bg-darker);
+            background: transparent;
+            z-index: 5;
+            padding: 15% 20px;
         }
 
         .slide.active {
-            opacity: 1;
+            animation: slideIn 0.8s ease forwards;
         }
 
-        /* Vignette effect */
-        .slide::before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.8) 100%);
-            pointer-events: none;
+        .slide.exit {
+            animation: slideOut 0.5s ease forwards;
         }
 
-        .slide-main-text {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: clamp(3rem, 12vw, 10rem);
-            letter-spacing: 0.3em;
-            color: var(--blood-red);
-            text-shadow: 0 0 50px rgba(139,0,0,0.5);
-            z-index: 1;
-            position: relative;
+        @keyframes slideIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
-        .slide-sub-text {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: clamp(0.8rem, 2vw, 1.2rem);
-            color: var(--text-dim);
-            margin-top: 20px;
+        @keyframes slideOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        /* Cinematic text */
+        .cinematic-text {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: 300;
+            color: #999;
             text-align: center;
-            z-index: 1;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.15em;
             line-height: 2;
         }
 
-        .slide-year {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: clamp(5rem, 20vw, 15rem);
-            color: transparent;
-            -webkit-text-stroke: 1px var(--blood-red);
-            text-shadow: 0 0 80px rgba(139,0,0,0.3);
-            z-index: 1;
-            opacity: 0.8;
+        .cinematic-text.small {
+            font-size: clamp(1.2rem, 3vw, 2rem);
         }
 
-        /* Glitch text effect */
+        .typewriter {
+            opacity: 0;
+            animation: typeIn 0.6s ease forwards;
+        }
+
+        .typewriter.dim { color: #555; }
+
+        @keyframes typeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .glow-text {
+            color: var(--blood-red);
+            text-shadow: 0 0 30px rgba(139,0,0,0.5);
+        }
+
+        .subtitle-text {
+            margin-top: 30px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(3rem, 10vw, 6rem);
+            letter-spacing: 0.5em;
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(139,0,0,0.5);
+        }
+
+        .fade-in {
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards;
+            animation-delay: 0.8s;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Impact text */
+        .impact-text {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(4rem, 15vw, 12rem);
+            letter-spacing: 0.2em;
+            color: var(--blood-red);
+            text-shadow: 0 0 60px rgba(139,0,0,0.8);
+            animation: impactIn 0.3s ease forwards;
+        }
+
+        .impact-text.delayed {
+            font-size: clamp(3rem, 12vw, 8rem);
+            opacity: 0;
+            animation: impactIn 0.4s ease forwards;
+            animation-delay: 0.8s;
+        }
+
+        @keyframes impactIn {
+            0% { opacity: 0; transform: scale(1.5); }
+            50% { opacity: 1; }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .highlight-word {
+            color: var(--blood-red) !important;
+            font-weight: 500;
+        }
+
+        /* Multi-line reveal */
+        .multi-line {
+            text-align: center;
+        }
+
+        .line-reveal {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: clamp(1.5rem, 5vw, 3rem);
+            font-weight: 300;
+            color: #666;
+            letter-spacing: 0.2em;
+            margin: 15px 0;
+            opacity: 0;
+            animation: lineReveal 0.6s ease forwards;
+        }
+
+        .line-reveal:nth-child(1) { animation-delay: 0s; }
+        .line-reveal:nth-child(2) { animation-delay: 0.4s; }
+        .line-reveal:nth-child(3) { animation-delay: 0.8s; }
+
+        @keyframes lineReveal {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Year reveal */
+        .year-reveal {
+            display: flex;
+            gap: 10px;
+        }
+
+        .year-num {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: clamp(5rem, 18vw, 14rem);
+            color: transparent;
+            -webkit-text-stroke: 1px var(--blood-red);
+            opacity: 0;
+            animation: numReveal 0.4s ease forwards;
+        }
+
+        .year-num:nth-child(1) { animation-delay: 0s; }
+        .year-num:nth-child(2) { animation-delay: 0.15s; }
+        .year-num:nth-child(3) { animation-delay: 0.3s; }
+        .year-num:nth-child(4) { animation-delay: 0.45s; }
+
+        @keyframes numReveal {
+            0% { opacity: 0; transform: translateY(-50px); }
+            60% { opacity: 1; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .location-text {
+            margin-top: 30px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: clamp(0.8rem, 2vw, 1.2rem);
+            color: #444;
+            letter-spacing: 0.3em;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: 0.8s;
+        }
+
+        /* Title reveal */
+        .title-reveal {
+            text-align: center;
+        }
+
+        .title-main {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(6rem, 25vw, 18rem);
+            letter-spacing: 0.4em;
+            color: var(--blood-red);
+            text-shadow: 0 0 80px rgba(139,0,0,0.6);
+            animation: titlePulse 2s ease infinite;
+        }
+
+        @keyframes titlePulse {
+            0%, 100% { text-shadow: 0 0 80px rgba(139,0,0,0.6); }
+            50% { text-shadow: 0 0 120px rgba(139,0,0,0.8), 0 0 40px rgba(139,0,0,0.4); }
+        }
+
+        .title-tagline {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: clamp(0.9rem, 2.5vw, 1.5rem);
+            color: #555;
+            letter-spacing: 0.3em;
+            margin-top: 20px;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards;
+            animation-delay: 0.5s;
+        }
+
+        .press-start {
+            position: absolute;
+            bottom: 18%;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: clamp(0.7rem, 1.5vw, 1rem);
+            color: #444;
+            letter-spacing: 0.3em;
+            animation: blink 1.5s ease infinite;
+            cursor: pointer;
+        }
+
+        @keyframes blink {
+            0%, 50%, 100% { opacity: 1; }
+            25%, 75% { opacity: 0.3; }
+        }
+
+        /* Glitch effect */
         .glitch {
             position: relative;
-            animation: glitchText 3s infinite;
         }
 
         .glitch::before,
@@ -169,80 +375,30 @@
             clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
         }
 
-        @keyframes glitchText {
-            0%, 90%, 100% { opacity: 1; }
-            92% { opacity: 0.8; }
-            94% { opacity: 1; }
-        }
-
         @keyframes glitchBefore {
-            0%, 90%, 100% { transform: translateX(0); }
-            91% { transform: translateX(-3px); }
-            93% { transform: translateX(3px); }
-            95% { transform: translateX(-2px); }
+            0%, 92%, 100% { transform: translateX(0); }
+            93% { transform: translateX(-8px); }
+            95% { transform: translateX(8px); }
+            97% { transform: translateX(-4px); }
         }
 
         @keyframes glitchAfter {
-            0%, 90%, 100% { transform: translateX(0); }
-            91% { transform: translateX(3px); }
-            93% { transform: translateX(-3px); }
-            95% { transform: translateX(2px); }
-        }
-
-        /* Corrupted text */
-        .corrupted {
-            position: relative;
-            display: inline-block;
-        }
-
-        .corrupted::after {
-            content: '█████';
-            position: absolute;
-            left: 0;
-            top: 0;
-            color: var(--blood-red);
-            animation: corruptFlicker 4s infinite;
-        }
-
-        @keyframes corruptFlicker {
-            0%, 95%, 100% { opacity: 0; }
-            96% { opacity: 1; }
-            97% { opacity: 0; }
-            98% { opacity: 0.5; }
-        }
-
-        .slide-fragment {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: clamp(1rem, 3vw, 1.8rem);
-            color: var(--text-faded);
-            text-align: center;
-            line-height: 2.5;
-            z-index: 1;
-            max-width: 800px;
-            padding: 0 20px;
-        }
-
-        .slide-fragment .highlight {
-            color: var(--blood-red);
-        }
-
-        .slide-fragment .redacted {
-            background: var(--blood-red);
-            color: var(--blood-red);
-            padding: 0 8px;
-            margin: 0 4px;
+            0%, 92%, 100% { transform: translateX(0); }
+            93% { transform: translateX(8px); }
+            95% { transform: translateX(-8px); }
+            97% { transform: translateX(4px); }
         }
 
         .skip-btn {
             position: fixed;
-            bottom: 30px;
+            bottom: 4%;
             right: 30px;
             padding: 10px 25px;
             background: transparent;
-            border: 1px solid var(--text-dim);
-            color: var(--text-dim);
+            border: 1px solid #333;
+            color: #444;
             font-family: 'Share Tech Mono', monospace;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             cursor: pointer;
             z-index: 1001;
             transition: all 0.3s ease;
@@ -853,51 +1009,90 @@
 <body>
     <!-- TEASER -->
     <div id="teaser">
+        <!-- Letterbox bars -->
+        <div class="letterbox top"></div>
+        <div class="letterbox bottom"></div>
+        
+        <!-- Floating particles -->
+        <div class="particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+
         <div class="slide active" data-slide="0">
-            <div class="slide-main-text glitch" data-text="EDEN">EDEN</div>
-            <div class="slide-sub-text">"Where Dreams Bloom"</div>
+            <div class="cinematic-text">
+                <span class="typewriter" data-delay="0">그들은 말한다.</span>
+            </div>
         </div>
 
         <div class="slide" data-slide="1">
-            <div class="slide-fragment">
-                마법소녀.<br>
-                세상을 지키는 <span class="highlight">희망</span>의 상징.
+            <div class="cinematic-text">
+                <span class="typewriter glow-text" data-delay="0">"꿈이 피어나는 곳"</span>
+            </div>
+            <div class="subtitle-text">
+                <span class="fade-in" data-delay="800">EDEN</span>
             </div>
         </div>
 
         <div class="slide" data-slide="2">
-            <div class="slide-fragment">
-                <span class="redacted">거짓</span>
+            <div class="cinematic-text small">
+                <span class="typewriter" data-delay="0">마법소녀.</span><br>
+                <span class="typewriter" data-delay="600">세상을 지키는 희망.</span>
             </div>
         </div>
 
         <div class="slide" data-slide="3">
-            <div class="slide-fragment">
-                그들은 <span class="highlight">상품</span>이다.<br>
-                통제되고, 소비되고, <span class="redacted">폐기</span>된다.
-            </div>
+            <div class="impact-text glitch" data-text="거짓말.">거짓말.</div>
         </div>
 
         <div class="slide" data-slide="4">
-            <div class="slide-fragment">
-                퓨어라이트가 <span class="highlight">진실</span>을 덮는다.<br>
-                이터널 아카이브가 <span class="highlight">시체</span>를 처리한다.
+            <div class="cinematic-text small">
+                <span class="typewriter" data-delay="0">그들은</span>
+                <span class="typewriter highlight-word" data-delay="400">상품</span>
+                <span class="typewriter" data-delay="600">이다.</span>
             </div>
         </div>
 
         <div class="slide" data-slide="5">
-            <div class="slide-fragment">
-                선택받지 못한 자들은<br>
-                <span class="highlight">오염체</span>라 불린다.
+            <div class="multi-line">
+                <div class="line-reveal" data-delay="0">통제되고</div>
+                <div class="line-reveal" data-delay="400">소비되고</div>
+                <div class="line-reveal highlight-word" data-delay="800">폐기된다.</div>
             </div>
         </div>
 
         <div class="slide" data-slide="6">
-            <div class="slide-year">3125</div>
-            <div class="slide-sub-text">SEOUL, KOREA</div>
+            <div class="cinematic-text small">
+                <span class="typewriter dim" data-delay="0">진실을 아는 자들은</span>
+            </div>
+            <div class="impact-text delayed">오염체</div>
+            <div class="cinematic-text small">
+                <span class="typewriter dim" data-delay="1200">라 불린다.</span>
+            </div>
         </div>
 
-        <button class="skip-btn" onclick="skipTeaser()">SKIP</button>
+        <div class="slide" data-slide="7">
+            <div class="year-reveal">
+                <span class="year-num">3</span>
+                <span class="year-num">1</span>
+                <span class="year-num">2</span>
+                <span class="year-num">5</span>
+            </div>
+            <div class="location-text">SEOUL, KOREA</div>
+        </div>
+
+        <div class="slide" data-slide="8">
+            <div class="title-reveal">
+                <div class="title-main glitch" data-text="SIDE">SIDE</div>
+                <div class="title-tagline">— 꿈이 썩어가는 곳 —</div>
+            </div>
+            <div class="press-start">CLICK TO START</div>
+        </div>
+
+        <button class="skip-btn" onclick="skipTeaser()">SKIP ▸</button>
     </div>
 
     <!-- MAIN -->
@@ -917,7 +1112,7 @@
                         <span>세계관</span>
                     </div>
                     <div class="folder-files">
-                        <div class="file-item active" onclick="showContent('timeline')">타임라인</div>
+                        <div class="file-item active" onclick="showContent('timeline', this)">타임라인</div>
                     </div>
                 </div>
 
@@ -928,10 +1123,10 @@
                         <span class="folder-count">4</span>
                     </div>
                     <div class="folder-files">
-                        <div class="file-item" onclick="showContent('eden')">에덴</div>
-                        <div class="file-item" onclick="showContent('purelight')">퓨어라이트</div>
-                        <div class="file-item" onclick="showContent('archive')">이터널 아카이브</div>
-                        <div class="file-item" onclick="showContent('corrupted')">오염체</div>
+                        <div class="file-item" onclick="showContent('eden', this)">에덴</div>
+                        <div class="file-item" onclick="showContent('purelight', this)">퓨어라이트</div>
+                        <div class="file-item" onclick="showContent('archive', this)">이터널 아카이브</div>
+                        <div class="file-item" onclick="showContent('corrupted', this)">오염체</div>
                     </div>
                 </div>
 
@@ -942,11 +1137,11 @@
                         <span class="folder-count">5</span>
                     </div>
                     <div class="folder-files">
-                        <div class="file-item" onclick="showContent('han-seojin')">한서진</div>
-                        <div class="file-item" onclick="showContent('park-junhyuk')">박준혁</div>
-                        <div class="file-item" onclick="showContent('yoon-mirae')">윤미래</div>
-                        <div class="file-item" onclick="showContent('lee-chaewon')">이채원</div>
-                        <div class="file-item" onclick="showContent('park-jiwon')">박지원</div>
+                        <div class="file-item" onclick="showContent('han-seojin', this)">한서진</div>
+                        <div class="file-item" onclick="showContent('park-junhyuk', this)">박준혁</div>
+                        <div class="file-item" onclick="showContent('yoon-mirae', this)">윤미래</div>
+                        <div class="file-item" onclick="showContent('lee-chaewon', this)">이채원</div>
+                        <div class="file-item" onclick="showContent('park-jiwon', this)">박지원</div>
                     </div>
                 </div>
 
@@ -957,9 +1152,9 @@
                         <span class="folder-count">3</span>
                     </div>
                     <div class="folder-files">
-                        <div class="file-item" onclick="showContent('jung-hyeyeon')"><span class="rank-badge rank-s">S</span> 정혜연</div>
-                        <div class="file-item" onclick="showContent('lee-seoyeon')"><span class="rank-badge rank-s">S</span> 이서연</div>
-                        <div class="file-item" onclick="showContent('kwon-chaerin')"><span class="rank-badge rank-s">S</span> 권채린</div>
+                        <div class="file-item" onclick="showContent('jung-hyeyeon', this)"><span class="rank-badge rank-s">S</span> 정혜연</div>
+                        <div class="file-item" onclick="showContent('lee-seoyeon', this)"><span class="rank-badge rank-s">S</span> 이서연</div>
+                        <div class="file-item" onclick="showContent('kwon-chaerin', this)"><span class="rank-badge rank-s">S</span> 권채린</div>
                     </div>
                 </div>
 
@@ -970,11 +1165,11 @@
                         <span class="folder-count">5</span>
                     </div>
                     <div class="folder-files">
-                        <div class="file-item" onclick="showContent('ha-yujeong')"><span class="rank-badge rank-a">A</span> 하유정</div>
-                        <div class="file-item" onclick="showContent('ahn-siwoo')"><span class="rank-badge rank-a">A</span> 안시우</div>
-                        <div class="file-item" onclick="showContent('song-aram')"><span class="rank-badge rank-a">A</span> 송아람</div>
-                        <div class="file-item" onclick="showContent('seo-yeeun')"><span class="rank-badge rank-a">A</span> 서예은</div>
-                        <div class="file-item" onclick="showContent('shin-onyu')"><span class="rank-badge rank-a">A</span> 신온유</div>
+                        <div class="file-item" onclick="showContent('ha-yujeong', this)"><span class="rank-badge rank-a">A</span> 하유정</div>
+                        <div class="file-item" onclick="showContent('ahn-siwoo', this)"><span class="rank-badge rank-a">A</span> 안시우</div>
+                        <div class="file-item" onclick="showContent('song-aram', this)"><span class="rank-badge rank-a">A</span> 송아람</div>
+                        <div class="file-item" onclick="showContent('seo-yeeun', this)"><span class="rank-badge rank-a">A</span> 서예은</div>
+                        <div class="file-item" onclick="showContent('shin-onyu', this)"><span class="rank-badge rank-a">A</span> 신온유</div>
                     </div>
                 </div>
 
@@ -985,13 +1180,13 @@
                         <span class="folder-count">7</span>
                     </div>
                     <div class="folder-files">
-                        <div class="file-item" onclick="showContent('ryu-saena')"><span class="rank-badge rank-b">B</span> 류새나</div>
-                        <div class="file-item" onclick="showContent('im-sori')"><span class="rank-badge rank-b">B</span> 임소리</div>
-                        <div class="file-item" onclick="showContent('baek-ya')"><span class="rank-badge rank-b">B</span> 백야</div>
-                        <div class="file-item" onclick="showContent('ban-seola')"><span class="rank-badge rank-b">B</span> 반설아</div>
-                        <div class="file-item" onclick="showContent('kang-seorin')"><span class="rank-badge rank-b">B</span> 강서린</div>
-                        <div class="file-item" onclick="showContent('jung-dohee')"><span class="rank-badge rank-b">B</span> 정도희</div>
-                        <div class="file-item" onclick="showContent('oh-jieun')"><span class="rank-badge rank-b">B</span> 오지은</div>
+                        <div class="file-item" onclick="showContent('ryu-saena', this)"><span class="rank-badge rank-b">B</span> 류새나</div>
+                        <div class="file-item" onclick="showContent('im-sori', this)"><span class="rank-badge rank-b">B</span> 임소리</div>
+                        <div class="file-item" onclick="showContent('baek-ya', this)"><span class="rank-badge rank-b">B</span> 백야</div>
+                        <div class="file-item" onclick="showContent('ban-seola', this)"><span class="rank-badge rank-b">B</span> 반설아</div>
+                        <div class="file-item" onclick="showContent('kang-seorin', this)"><span class="rank-badge rank-b">B</span> 강서린</div>
+                        <div class="file-item" onclick="showContent('jung-dohee', this)"><span class="rank-badge rank-b">B</span> 정도희</div>
+                        <div class="file-item" onclick="showContent('oh-jieun', this)"><span class="rank-badge rank-b">B</span> 오지은</div>
                     </div>
                 </div>
 
@@ -1002,9 +1197,9 @@
                         <span class="folder-count">3</span>
                     </div>
                     <div class="folder-files">
-                        <div class="file-item" onclick="showContent('yoo-hwayoung')"><span class="rank-badge rank-c">C</span> 유화영</div>
-                        <div class="file-item" onclick="showContent('baek-hayul')"><span class="rank-badge rank-c">C</span> 백하율</div>
-                        <div class="file-item" onclick="showContent('joo-gaeun')"><span class="rank-badge rank-c">C</span> 주가은</div>
+                        <div class="file-item" onclick="showContent('yoo-hwayoung', this)"><span class="rank-badge rank-c">C</span> 유화영</div>
+                        <div class="file-item" onclick="showContent('baek-hayul', this)"><span class="rank-badge rank-c">C</span> 백하율</div>
+                        <div class="file-item" onclick="showContent('joo-gaeun', this)"><span class="rank-badge rank-c">C</span> 주가은</div>
                     </div>
                 </div>
 
@@ -1015,10 +1210,10 @@
                         <span class="folder-count">4</span>
                     </div>
                     <div class="folder-files">
-                        <div class="file-item" onclick="showContent('choi-seoyoung')">최서영</div>
-                        <div class="file-item" onclick="showContent('na-yunseo')">나윤서</div>
-                        <div class="file-item" onclick="showContent('kang-minjun')">강민준</div>
-                        <div class="file-item" onclick="showContent('yoon-cheaa')">윤채아</div>
+                        <div class="file-item" onclick="showContent('choi-seoyoung', this)">최서영</div>
+                        <div class="file-item" onclick="showContent('na-yunseo', this)">나윤서</div>
+                        <div class="file-item" onclick="showContent('kang-minjun', this)">강민준</div>
+                        <div class="file-item" onclick="showContent('yoon-cheaa', this)">윤채아</div>
                     </div>
                 </div>
 
@@ -1029,9 +1224,9 @@
                         <span class="folder-count">3</span>
                     </div>
                     <div class="folder-files">
-                        <div class="file-item" onclick="showContent('judge-a')">A (AMOR)</div>
-                        <div class="file-item" onclick="showContent('judge-r')">R (REBELLION)</div>
-                        <div class="file-item" onclick="showContent('judge-z')">Z (ZERO)</div>
+                        <div class="file-item" onclick="showContent('judge-a', this)">A (AMOR)</div>
+                        <div class="file-item" onclick="showContent('judge-r', this)">R (REBELLION)</div>
+                        <div class="file-item" onclick="showContent('judge-z', this)">Z (ZERO)</div>
                     </div>
                 </div>
 
@@ -1042,9 +1237,9 @@
                         <span class="folder-count">3</span>
                     </div>
                     <div class="folder-files">
-                        <div class="file-item" onclick="showContent('jin-soyul')">진소율</div>
-                        <div class="file-item" onclick="showContent('han-byeol')">한별</div>
-                        <div class="file-item" onclick="showContent('lee-yun')">이윤</div>
+                        <div class="file-item" onclick="showContent('jin-soyul', this)">진소율</div>
+                        <div class="file-item" onclick="showContent('han-byeol', this)">한별</div>
+                        <div class="file-item" onclick="showContent('lee-yun', this)">이윤</div>
                     </div>
                 </div>
 
@@ -1055,10 +1250,10 @@
                         <span class="folder-count">4</span>
                     </div>
                     <div class="folder-files">
-                        <div class="file-item" onclick="showContent('kim-minji')">김민지</div>
-                        <div class="file-item" onclick="showContent('lee-junho')">이준호</div>
-                        <div class="file-item" onclick="showContent('choi-arin')">최아린</div>
-                        <div class="file-item" onclick="showContent('joo-minhyuk')">주민혁</div>
+                        <div class="file-item" onclick="showContent('kim-minji', this)">김민지</div>
+                        <div class="file-item" onclick="showContent('lee-junho', this)">이준호</div>
+                        <div class="file-item" onclick="showContent('choi-arin', this)">최아린</div>
+                        <div class="file-item" onclick="showContent('joo-minhyuk', this)">주민혁</div>
                     </div>
                 </div>
             </nav>
@@ -1090,7 +1285,7 @@
             timeline: {
                 path: 'world/timeline',
                 classification: 'classified',
-                html: `
+                html: \`
                     <div class="timeline-section">
                         <div class="timeline-title">TIMELINE</div>
                         <div class="timeline">
@@ -1108,8 +1303,13 @@
                                 <div class="timeline-event">히어로 폭주 사태</div>
                                 <div class="timeline-desc">시스템 붕괴. 암흑기.</div>
                             </div>
+                            <div class="timeline-item dark" style="opacity: 0.6;">
+                                <div class="timeline-year" style="color: var(--text-dim);">2███</div>
+                                <div class="timeline-event" style="background: var(--blood-red); color: var(--blood-red); display: inline-block; padding: 0 10px;">[REDACTED]</div>
+                                <div class="timeline-desc" style="background: var(--text-dim); color: var(--text-dim); display: inline-block; padding: 0 8px; margin-top: 5px;">████████████████</div>
+                            </div>
                             <div class="timeline-item dark">
-                                <div class="timeline-year">3103</div>
+                                <div class="timeline-year">3012</div>
                                 <div class="timeline-event">마법소녀 체제 확립</div>
                                 <div class="timeline-desc">에덴 설립. 더욱 치밀한 통제 시스템.</div>
                             </div>
@@ -1119,7 +1319,7 @@
                             </div>
                         </div>
                     </div>
-                `
+                \`
             },
 
             eden: {
@@ -2040,13 +2240,28 @@
 
         // Slideshow
         let currentSlide = 0;
-        const totalSlides = 7;
+        const totalSlides = 9;
         let slideInterval;
+        let isLastSlide = false;
 
         function showSlide(n) {
-            document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
-            const slide = document.querySelector(`[data-slide="${n}"]`);
-            if (slide) slide.classList.add('active');
+            const current = document.querySelector('.slide.active');
+            if (current) {
+                current.classList.remove('active');
+                current.classList.add('exit');
+                setTimeout(() => current.classList.remove('exit'), 500);
+            }
+            
+            const slide = document.querySelector(\`[data-slide="\${n}"]\`);
+            if (slide) {
+                setTimeout(() => slide.classList.add('active'), 100);
+            }
+            
+            // Last slide - stop auto advance
+            if (n === totalSlides - 1) {
+                isLastSlide = true;
+                clearInterval(slideInterval);
+            }
         }
 
         function nextSlide() {
@@ -2066,8 +2281,16 @@
         function endTeaser() {
             document.getElementById('teaser').classList.add('hidden');
             document.getElementById('main-content').classList.add('visible');
-            showContent('timeline');
+            const firstItem = document.querySelector('.file-item.active');
+            showContent('timeline', firstItem);
         }
+
+        // Click to start on last slide
+        document.addEventListener('click', (e) => {
+            if (isLastSlide && !e.target.classList.contains('skip-btn')) {
+                endTeaser();
+            }
+        });
 
         // File System
         function toggleFolder(header) {
@@ -2076,7 +2299,7 @@
             header.querySelector('.folder-icon').textContent = folder.classList.contains('open') ? '▾' : '▸';
         }
 
-        function showContent(id) {
+        function showContent(id, el) {
             const data = contentData[id];
             if (!data) return;
 
@@ -2089,22 +2312,25 @@
             document.getElementById('file-content').innerHTML = data.html;
 
             document.querySelectorAll('.file-item').forEach(i => i.classList.remove('active'));
-            if (event && event.target) event.target.classList.add('active');
+            if (el) el.classList.add('active');
         }
 
         function mobileNav(folder) {
             document.querySelectorAll('.mobile-nav button').forEach(b => b.classList.remove('active'));
             event.target.classList.add('active');
-            const f = document.querySelector(`[data-folder="${folder}"]`);
+            const f = document.querySelector(\`[data-folder="\${folder}"]\`);
             if (f) {
                 const first = f.querySelector('.file-item');
-                if (first) first.click();
+                if (first) {
+                    const id = first.getAttribute('onclick').match(/showContent\('([^']+)'/)[1];
+                    showContent(id, first);
+                }
             }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             showSlide(0);
-            slideInterval = setInterval(nextSlide, 3000);
+            slideInterval = setInterval(nextSlide, 3500);
         });
     </script>
 </body>
